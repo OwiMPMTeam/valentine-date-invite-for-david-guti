@@ -449,3 +449,45 @@ svg{
 .opening .letterImg{
   transform: scale(1.08) rotate(-2deg);
 }
+
+.scribble-btn{
+  position: relative;
+  background: transparent;
+  border: none;
+  padding: 18px 28px;
+  font-family: "Gluten", system-ui;
+  font-size: 24px;
+  cursor: pointer;
+  color: var(--ink);
+  isolation: isolate;
+}
+
+.scribble-btn svg{
+  position: absolute;
+  inset: -12px;
+  width: calc(100% + 24px);
+  height: calc(100% + 24px);
+  z-index: -1;
+  pointer-events: none;
+}
+
+.scribble-btn path{
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 420;
+  stroke-dashoffset: 0;
+  animation: scribbleBreath 2.6s steps(2,end) infinite;
+}
+
+@keyframes scribbleBreath{
+  0%   { stroke-dashoffset: 0; transform: rotate(-0.4deg); }
+  50%  { stroke-dashoffset: 8; transform: rotate(0.6deg); }
+  100% { stroke-dashoffset: 0; transform: rotate(-0.2deg); }
+}
+
+.scribble-btn:hover path{
+  animation-duration: 1.4s;
+}
