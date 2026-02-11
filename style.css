@@ -40,7 +40,16 @@ body{
   padding:22px;
   overflow:auto;
 }
-.screen.active{ display:block; }
+
+.screen.active{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+.screen > *{
+  width: min(1100px, 94vw);
+}
 
 .card, .centerCard, .scheduleCard{
   max-width: 720px;
