@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Valentine Date Invite 💘</title>
+
+  <!-- Free handwritten vibe -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Patrick+Hand&display=swap" rel="stylesheet">
+
+  <link rel="stylesheet" href="./style.css"/>
+</head>
+<body>
+  <div class="noise"></div>
+
+  <!-- Password Gate -->
+  <section class="screen active" id="screen-password">
+    <div class="card">
+      <div class="scribbleTitle">Enter the secret password 💌</div>
+      <div class="smallNote">(Hint: it’s our little phrase)</div>
+
+      <div class="row">
+        <input id="pwInput" class="input" type="text" placeholder='Type: "Our Love Day"' autocomplete="off" />
+        <button id="pwBtn" class="btn primary">Unlock</button>
+      </div>
+
+      <div id="pwError" class="error hidden">Nope 😼 Try again.</div>
+    </div>
+  </section>
+
+  <!-- Cover -->
+  <section class="screen" id="screen-cover">
+    <div class="coverWrap" id="parallaxArea">
+      <div class="topTag scribbleFloat">Valentine’s Day Invitation</div>
+
+      <div class="coverGrid">
+        <div class="letterArea">
+          <div class="letterStack" id="letterStack" role="button" tabindex="0" aria-label="Open letter">
+            <img class="letterImg" id="letterImg" src="./assets/cover/letter.png" alt="Letter" />
+            <div class="letterHint">Tap to open 💘</div>
+          </div>
+        </div>
+
+        <div class="decorArea">
+          <img class="decor parallax" data-depth="8" src="./assets/cover/gif1.gif" alt="Decor gif 1"/>
+          <img class="decor parallax" data-depth="12" src="./assets/cover/gif2.gif" alt="Decor gif 2"/>
+          <img class="decor parallax" data-depth="10" src="./assets/cover/gif3.gif" alt="Decor gif 3"/>
+          <img class="usPhoto parallax" data-depth="6" src="./assets/cover/us.jpg" alt="Us photo"/>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Question -->
+  <section class="screen" id="screen-question">
+    <div class="questionBg">
+      <img id="questionBgImg" src="./assets/question/bg.gif" alt="Cute background"/>
+    </div>
+
+    <div class="centerCard">
+      <div class="scribbleTitle big wobble">Will you be my valentine?</div>
+
+      <div class="btnRow">
+        <button id="yesBtn" class="btn yes">Yes.</button>
+        <button id="noBtn" class="btn no">Hell nah, Keysha!</button>
+      </div>
+
+      <div id="noCounter" class="smallNote"></div>
+    </div>
+  </section>
+
+  <!-- Schedule -->
+  <section class="screen" id="screen-schedule">
+    <div class="scheduleWrap">
+      <div class="scribbleTitle big">Ok babe… it’s a date 💞</div>
+      <div class="smallNote">
+        Click to add it to your Apple Calendar (one tap, one invite).
+      </div>
+
+      <div class="scheduleGrid">
+        <div class="scheduleCard">
+          <div class="scheduleName">💘 Long Distance Valentine Date</div>
+          <div class="scheduleDesc" id="scheduleDesc">
+            (We’ll fill the real time + plan later — you’ll replace this text.)
+          </div>
+
+          <a class="btn primary full" href="./calendar/valentine-date.ics" download>
+            Add to Apple Calendar 🍎
+          </a>
+
+          <div class="tiny">
+            If your phone asks what to open it with, choose Calendar.
+          </div>
+        </div>
+
+        <div class="polaroids">
+          <div class="polaroid tilt1"><img src="./assets/schedule/polaroid1.jpg" alt="Polaroid 1"/></div>
+          <div class="polaroid tilt2"><img src="./assets/schedule/polaroid2.jpg" alt="Polaroid 2"/></div>
+          <div class="polaroid tilt3"><img src="./assets/schedule/polaroid3.jpg" alt="Polaroid 3"/></div>
+          <div class="polaroid tilt4"><img src="./assets/schedule/polaroid4.jpg" alt="Polaroid 4"/></div>
+        </div>
+      </div>
+
+      <div class="center">
+        <button id="giftBtn" class="btn gift">Collect your first gift 🎁</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gift -->
+  <section class="screen" id="screen-gift">
+    <div class="giftWrap">
+      <div class="scribbleTitle big wobble">I love you, baby! 🌹</div>
+      <div class="smallNote">Can’t wait for our date.</div>
+
+      <div id="roseField" class="roseField" aria-hidden="true"></div>
+
+      <div class="center">
+        <button id="restartBtn" class="btn primary">Do it again! 🔁</button>
+      </div>
+    </div>
+  </section>
+
+  <script src="./app.js"></script>
+</body>
+</html>
