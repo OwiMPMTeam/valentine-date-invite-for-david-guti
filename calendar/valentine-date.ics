@@ -1,0 +1,15 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Owi//Valentine Invite//EN
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:valentine-date-invite-for-david-guti@example.com
+DTSTAMP:20260211T180000Z
+SUMMARY:Long Distance Valentine Date 💘
+DESCRIPTION:Your invite is waiting. Bring your cutest smile + FaceTime energy 😘
+LOCATION:FaceTime
+DTSTART:20260214T200000Z
+DTEND:20260214T220000Z
+END:VEVENT
+END:VCALENDAR
