@@ -10,7 +10,6 @@
   <meta property="og:title" content="Valentines 2026 Gift for David 💖">
   <meta property="og:description" content="A tiny interactive Valentine surprise 💗">
   <meta property="og:type" content="website">
-  <!-- IMPORTANT: your image file name + path -->
   <meta property="og:image" content="./assets/ui/link-preview.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -28,6 +27,10 @@
 <body>
   <div class="noise" aria-hidden="true"></div>
   <div class="sparkles" id="sparkles" aria-hidden="true"></div>
+
+  <!-- AUDIO (you will add the files) -->
+  <audio id="sparkleSfx" src="./assets/audio/sparkle-pop.mp3" preload="auto"></audio>
+  <audio id="bgMusic" src="./assets/audio/bg-music.mp3" preload="auto" loop></audio>
 
   <!-- Tilt Permission Gate (iOS requires a tap) -->
   <div class="tiltGate" id="tiltGate" aria-hidden="true">
@@ -48,7 +51,6 @@
     <div class="wrap">
       <h1 class="title stroke">Enter the secret password 💌</h1>
 
-      <!-- Hint aligned LEFT with the input width -->
       <div class="hintLine stroke">
         <span class="hintLabel">Hint:</span> <b>Our Love Day</b>
       </div>
@@ -61,8 +63,6 @@
       </div>
 
       <div id="pwMsg" class="pwMsg stroke"></div>
-
-      <!-- GIF placed near input (not full-screen) -->
       <div class="pwGossip" id="pwGossip" aria-hidden="true"></div>
     </div>
   </section>
@@ -75,15 +75,12 @@
       </h1>
 
       <div class="stage" id="parallaxArea">
-        <!-- background decor -->
         <img class="decor parallax d1" data-depth="22" data-rot="-7" src="./assets/cover/gif1.gif" alt="gif1">
         <img class="decor parallax d2" data-depth="28" data-rot="8"  src="./assets/cover/gif2.gif" alt="gif2">
         <img class="decor parallax d3" data-depth="24" data-rot="-5" src="./assets/cover/gif3.gif" alt="gif3">
 
-        <!-- your photo -->
         <img class="usPhoto parallax u1" data-depth="18" data-rot="4" src="./assets/cover/us.jpg" alt="us">
 
-        <!-- centered letter -->
         <button class="letterBtn" id="letterBtn" type="button" aria-label="Open the card">
           <img class="letterImg" id="letterImg" src="./assets/cover/Letter_Flying.gif" alt="letter">
           <div class="tap stroke">Tap to open 💘</div>
@@ -98,7 +95,7 @@
       <img id="qBgImg" src="./assets/question/bg.gif" alt="bg">
     </div>
 
-    <div class="wrap qWrap">
+    <div class="wrap qWrap" id="qWrap">
       <h1 class="title stroke">
         Will you be my <span class="val">valentine</span>? 🥹🫶
       </h1>
@@ -120,7 +117,7 @@
   <!-- SCHEDULE -->
   <section class="screen" id="screen-schedule">
     <div class="wrap">
-      <h1 class="title stroke">Ok babe… it’s a date 💞</h1>
+      <h1 class="title stroke">Ok bebé… it’s a date 💞</h1>
       <p class="sub stroke">Tap once to add to Apple Calendar.</p>
 
       <div class="scheduleGrid" id="scheduleParallaxArea">
@@ -141,13 +138,13 @@
           <div class="polaroid parallax p3" data-depth="12" data-rot="3"><img src="./assets/schedule/polaroid3.jpg" alt="p3"></div>
           <div class="polaroid parallax p4" data-depth="16" data-rot="-4"><img src="./assets/schedule/polaroid4.jpg" alt="p4"></div>
         </div>
-      </div>
 
-      <!-- centered mid page -->
-      <div class="giftCenter">
-        <button id="giftBtn" class="btn lined thick yesOutline" type="button">
-          <span class="btnStroke">COLLECT YOUR FIRST GIFT 🎁</span>
-        </button>
+        <!-- Button lives INSIDE the grid so on iPhone it's right under the left box -->
+        <div class="giftCenter">
+          <button id="giftBtn" class="btn lined thick yesOutline" type="button">
+            <span class="btnStroke">COLLECT YOUR FIRST GIFT 🎁</span>
+          </button>
+        </div>
       </div>
     </div>
   </section>
