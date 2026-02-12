@@ -1,15 +1,15 @@
 BEGIN:VCALENDAR
 VERSION:2.0
-PRODID:-//Owi//Valentine Invite//EN
+PRODID:-//MPMTeam//Valentine Microsite//EN
 CALSCALE:GREGORIAN
 METHOD:PUBLISH
 BEGIN:VEVENT
-UID:valentine-date-invite-for-david-guti@example.com
-DTSTAMP:20260211T180000Z
-SUMMARY:Long Distance Valentine Date 💘
-DESCRIPTION:Your invite is waiting. Bring your cutest smile + FaceTime energy 😘
-LOCATION:FaceTime
-DTSTART:20260214T200000Z
-DTEND:20260214T220000Z
+UID:ldr-valentines-2026-again
+DTSTAMP:20260212T000000Z
+SUMMARY:LDR Valentine's Day 2026... again
+DTSTART;TZID=America/Los_Angeles:20260214T180000
+DTEND;TZID=America/Los_Angeles:20260214T230000
+DESCRIPTION:Schedule:\n\n1) Optional: Order some food for yourself first 🍜🍕\n2) Co-op games 🎮 (pick a few!)\n   - DUO\n   - Happy Burger\n   - or anything from CrazyGames: https://www.crazygames.com/t/co-op\n3) Movie pick 🍿🎬\n   - The Holiday\n   - Anyone But You\n   - Norbit\n   - or whatever you want\n4) End: sleep like good Christians 😇 (jk we’re gay 🏳️‍🌈)\n\nI love you 💗
+LOCATION:Long-distance date (FaceTime / Discord)
 END:VEVENT
 END:VCALENDAR
