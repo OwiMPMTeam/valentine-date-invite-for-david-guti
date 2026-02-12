@@ -24,7 +24,7 @@ body{
   font-family: "Gluten", system-ui, -apple-system, Segoe UI, Roboto, Arial;
 }
 
-/* Moving background noise */
+/* Moving noise */
 .noise{
   position:fixed;
   inset:-30%;
@@ -34,7 +34,6 @@ body{
   background-size: 240px 240px;
   mix-blend-mode:multiply;
   animation: noiseFlicker 0.45s steps(2, end) infinite;
-  transform: translateZ(0);
   z-index: 0;
 }
 @keyframes noiseFlicker{
@@ -59,11 +58,9 @@ body{
   align-items:center;
   justify-content:center;
 }
-.content{
-  width: min(1100px, 94vw);
-}
+.content{ width: min(1100px, 94vw); }
 
-/* Scribbly animated type */
+/* Scribble type */
 .scribbleTitle{
   display:inline-block;
   letter-spacing: 0.2px;
@@ -77,56 +74,35 @@ body{
   font-size: clamp(42px, 6vw, 72px);
   line-height: 0.95;
 }
-.smallNote{
-  margin-top: 10px;
-  font-size: 18px;
-  color: var(--muted);
-}
-.tiny{
-  margin-top: 10px;
-  font-size: 14px;
-  color: rgba(0,0,0,0.62);
-}
+.smallNote{ margin-top: 10px; font-size: 18px; color: var(--muted); }
+.tiny{ margin-top: 10px; font-size: 14px; color: rgba(0,0,0,0.62); }
+
 @keyframes scribbleJitter{
   0%   { transform: translate(0px,0px) rotate(-0.35deg); }
   50%  { transform: translate(0.8px,-0.4px) rotate(0.45deg); }
   100% { transform: translate(-0.5px,0.6px) rotate(-0.2deg); }
 }
-.wobble{
-  display:inline-block;
-  animation: wobble 2.6s ease-in-out infinite;
-}
+.wobble{ display:inline-block; animation: wobble 2.6s ease-in-out infinite; }
 @keyframes wobble{
   0%,100%{ transform: rotate(-0.7deg) translateY(0); }
   50%    { transform: rotate(0.8deg) translateY(-2px); }
 }
 
-/* Password row */
-.row{
-  display:flex;
-  gap:10px;
-  margin-top: 14px;
-  flex-wrap: wrap;
-  align-items:center;
-}
+/* Password */
+.row{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; align-items:center; }
 .input{
-  flex:1;
-  min-width: 240px;
+  flex:1; min-width:240px;
   padding: 14px 14px;
   border-radius: 16px;
   border: 2px solid rgba(0,0,0,0.22);
-  outline: none;
+  outline:none;
   font-size: 18px;
   background: rgba(255,255,255,0.55);
 }
-.error{
-  margin-top: 10px;
-  color:#b8002a;
-  font-size: 18px;
-}
+.error{ margin-top:10px; color:#b8002a; font-size:18px; }
 .hidden{ display:none; }
 
-/* Gossip GIF behind password content + big */
+/* Gossip gif */
 .gossipGif{
   position:absolute;
   width: min(780px, 160vw);
@@ -142,7 +118,7 @@ body{
   50%     { transform: translate(-50%, -52%) rotate(1.4deg) scale(1.03); }
 }
 
-/* Buttons — Lined Thick + distortion */
+/* Buttons */
 .btn{
   align-self:center;
   background:transparent;
@@ -161,9 +137,7 @@ body{
   position:relative;
   isolation:isolate;
 }
-.btn:hover{
-  box-shadow:2px 8px 4px -6px hsla(0,0%,0%,.3);
-}
+.btn:hover{ box-shadow:2px 8px 4px -6px hsla(0,0%,0%,.3); }
 .btn.lined.thick{
   border: solid 7px currentColor;
   animation: btnWiggle 0.85s steps(2,end) infinite;
@@ -177,10 +151,8 @@ body{
   border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
   pointer-events:none;
   z-index:-1;
-
   filter:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' seed='7' stitchTiles='stitch'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='11'/%3E%3C/filter%3E%3C/svg%3E%23n");
-
   animation: outlineJitter 0.75s steps(2,end) infinite;
   opacity:0.34;
 }
@@ -202,30 +174,24 @@ body{
   100% { transform: rotate(-0.3deg) translate(-0.6px,0.6px); }
 }
 .btn:active{ transform: scale(0.97); }
-.btn:disabled{ opacity: 0.28; cursor: not-allowed; filter: grayscale(1); }
-.btn:disabled::before, .btn:disabled::after{ opacity: 0.12; animation:none; }
+.btn:disabled{ opacity:0.28; cursor:not-allowed; filter:grayscale(1); }
+.btn:disabled::before, .btn:disabled::after{ opacity:0.12; animation:none; }
+
 .btn.primary{ color: var(--pink); }
 .btn.no{ color: rgba(0,0,0,0.65); }
 .btn.yes{ color: rgba(0,0,0,0.88); }
 .btn.gift{ color: rgba(255,90,155,0.75); }
 .full{ width:100%; display:inline-block; text-align:center; text-decoration:none; }
 
-/* COVER screen */
-.coverHeadlineWrap{
-  display:flex;
-  justify-content:center;
-  margin-bottom: 10px;
-}
-.coverHeadline{
-  font-size: clamp(26px, 3.4vw, 44px);
-  text-align:center;
-}
+/* COVER */
+.coverHeadlineWrap{ display:flex; justify-content:center; margin-bottom:10px; }
+.coverHeadline{ font-size: clamp(26px, 3.4vw, 44px); text-align:center; }
 .pinkWord{ color: var(--pink); }
 
 .coverStage{
   position:relative;
   width: min(1100px, 94vw);
-  height: min(640px, 72vh);
+  height: min(660px, 74vh);
   margin: 0 auto;
   display:flex;
   align-items:center;
@@ -233,7 +199,7 @@ body{
   overflow: visible;
 }
 
-/* Letter center */
+/* Letter (best-possible fake white reduction) */
 .letterStack{
   position:relative;
   z-index: 3;
@@ -248,18 +214,13 @@ body{
 .letterGif{
   width: min(560px, 92vw);
   max-width: 560px;
-  filter: drop-shadow(0 18px 35px rgba(0,0,0,0.14));
+  /* Best effort "remove white" vibe */
+  mix-blend-mode: multiply;
+  filter: contrast(1.08) saturate(1.08);
   transform: translateZ(0);
+  /* keep edges nice */
+  image-rendering: auto;
 }
-
-/* OPTIONAL: blend mode to reduce white background look */
-.letterGif.blend{
-  mix-blend-mode: multiply; /* makes whites fade on light bg */
-}
-@supports not (mix-blend-mode: multiply){
-  .letterGif.blend{ filter: contrast(1.02) saturate(1.05); }
-}
-
 .letterHint{
   position:absolute;
   bottom: -8px;
@@ -270,7 +231,7 @@ body{
   z-index: 4;
 }
 
-/* Zooming the letter + ALSO the background stickers */
+/* Letter zoom */
 .letterStack.zooming .letterGif{
   animation: zoomPop 0.72s cubic-bezier(.1,.9,.2,1) forwards;
 }
@@ -289,44 +250,48 @@ body{
   100% { transform: translate3d(var(--px,0px), var(--py,0px), 0) scale(1.16) rotate(calc(var(--r,0deg) * 0.98)); opacity: .98; }
 }
 
-/* Back decor — slightly smaller + more spread, no borders */
+/* Background assets (more spread + less overlap) */
 .decor,
 .usPhoto{
   position:absolute;
   z-index: 1;
-  border: none;
-  outline: none;
-  box-shadow: none;
-  pointer-events: none; /* don’t steal taps */
+  border:none;
+  outline:none;
+  box-shadow:none;
+  pointer-events:none;
   will-change: transform;
   opacity: 0.92;
 }
 
+/* slightly smaller */
 .decor{
-  width: 420px;
-  height: 420px;
+  width: 400px;
+  height: 400px;
   object-fit: cover;
-  border-radius: 40px;
+  border-radius: 38px;
 }
+
+/* US PHOTO: sharp corners + soft shadow (polaroid feel) */
 .usPhoto{
   width: 420px;
   height: 520px;
   object-fit: cover;
-  border-radius: 44px;
-  opacity: 0.92;
+  border-radius: 0px; /* sharp */
+  box-shadow: 0 22px 48px rgba(0,0,0,0.14);
+  opacity: 0.96;
 }
 
-/* Spread-out positions + rotation stored in CSS vars for bg zoom */
-.d1{ left: -10%; top: 4%;  transform: rotate(-7deg); --r:-7deg; }
-.d2{ right: -12%; bottom: -6%; transform: rotate(8deg); --r:8deg; }
-.d3{ right: 10%; top: -14%; transform: rotate(-5deg); --r:-5deg; }
-.u1{ left: 10%; bottom: -14%; transform: rotate(4deg); --r:4deg; }
+/* pushed outward */
+.d1{ left: -18%; top: -4%;  transform: rotate(-7deg); --r:-7deg; }
+.d2{ right: -22%; bottom: -14%; transform: rotate(8deg);  --r:8deg; }
+.d3{ right: 18%; top: -22%; transform: rotate(-5deg); --r:-5deg; }
+.u1{ left: 18%; bottom: -22%; transform: rotate(4deg);  --r:4deg; }
 
-/* Sparkles layer */
+/* Sparkles overlay: persist & fall */
 .sparkles{
   position:absolute;
   inset:0;
-  z-index: 4; /* ABOVE the letter + hint */
+  z-index: 999; /* above everything */
   pointer-events:none;
   overflow: visible;
 }
@@ -335,41 +300,34 @@ body{
   transform: translate(-50%, -50%);
   line-height: 1;
   opacity: 0;
-  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.12));
-  animation: sparklePop 900ms ease-out forwards;
+  filter: drop-shadow(0 12px 18px rgba(0,0,0,0.12));
   will-change: transform, opacity;
+  animation: sparkleFall 1800ms ease-out forwards;
 }
-.spark.s1{ font-size: 18px; }
-.spark.s2{ font-size: 26px; }
-.spark.s3{ font-size: 34px; }
-.spark.s4{ font-size: 46px; }
+.spark.s1{ font-size: 22px; }
+.spark.s2{ font-size: 34px; }
+.spark.s3{ font-size: 46px; }
+.spark.s4{ font-size: 62px; }
 
-@keyframes sparklePop{
+@keyframes sparkleFall{
   0%{
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.3) rotate(-12deg);
+    transform: translate(-50%, -50%) scale(0.25) rotate(-14deg);
   }
-  25%{
+  16%{
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.08) rotate(10deg);
+    transform: translate(-50%, -50%) scale(1.10) rotate(12deg);
   }
   100%{
     opacity: 0;
-    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.92) rotate(24deg);
+    transform:
+      translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 240px))
+      scale(0.95)
+      rotate(34deg);
   }
 }
 
-/* Mobile tweaks */
-@media (max-width: 900px){
-  .decor{ width: 340px; height: 340px; opacity: 0.84; }
-  .usPhoto{ width: 320px; height: 410px; opacity: 0.86; }
-  .d1{ left: -18%; top: 14%; }
-  .d2{ right: -20%; bottom: -10%; }
-  .d3{ right: -10%; top: -18%; }
-  .u1{ left: -6%; bottom: -18%; }
-}
-
-/* Question bg */
+/* Question */
 .questionBg{
   position:fixed;
   inset:0;
