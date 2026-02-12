@@ -1,129 +1,71 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Valentine Invite 💘</title>
+  <title>Valentine 💗</title>
 
+  <!-- FONT (THIS FIXES YOUR FONT ISSUE) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gluten:wght@400;600;800&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="./style.css"/>
+  <link rel="stylesheet" href="style.css"/>
 </head>
 <body>
-  <div class="noise"></div>
 
-  <!-- Sparkles overlay (global, persists between screens) -->
-  <div class="sparkles" id="sparkles" aria-hidden="true"></div>
+  <!-- SPARKLES -->
+  <div id="sparkles"></div>
 
-  <!-- PASSWORD -->
-  <section class="screen active" id="screen-password">
-    <div class="content">
-      <h1 class="scribbleTitle big strokeText">Enter the secret password 💌</h1>
-      <p class="smallNote strokeText">Hint: Our Love Day</p>
+  <!-- SCREEN: COVER -->
+  <section class="screen active" id="cover">
+    <h1 class="title">
+      Open Your <span class="pink">Valentine’s</span> Card 💗
+    </h1>
 
-      <div class="row">
-        <input id="pwInput" class="input" type="password" placeholder="••• •••" autocomplete="off"/>
-        <button id="pwBtn" class="btn lined thick primary">Unlock</button>
-      </div>
+    <div class="stage">
+      <img src="assets/cover/gif1.gif" class="decor d1">
+      <img src="assets/cover/gif2.gif" class="decor d2">
+      <img src="assets/cover/gif3.gif" class="decor d3">
+      <img src="assets/cover/us.jpg" class="us">
 
-      <div id="pwError" class="error hidden"></div>
-      <div id="pwGossipHost"></div>
+      <button id="letterBtn">
+        <img id="letterImg" src="assets/cover/Letter_Flying.gif">
+        <div class="tap">Tap to open 💘</div>
+      </button>
     </div>
   </section>
 
-  <!-- COVER -->
-  <section class="screen" id="screen-cover">
-    <div class="content coverContent">
-      <div class="coverHeadlineWrap">
-        <h2 class="coverHeadline scribbleTitle strokeText topLayer">
-          Open Your <span class="pinkWord">Valentine’s</span> Card 💗
-        </h2>
-      </div>
+  <!-- SCREEN: QUESTION -->
+  <section class="screen" id="question">
+    <h1 class="title">
+      Will you be my <span class="pink">valentine</span>? 🥺🫶
+    </h1>
 
-      <div class="coverStage" id="parallaxArea">
-        <!-- background decor -->
-        <img id="gif1" class="decor parallax d1" data-depth="20" src="./assets/cover/gif1.gif" alt="gif1"/>
-        <img id="gif2" class="decor parallax d2" data-depth="26" src="./assets/cover/gif2.gif" alt="gif2"/>
-        <img id="gif3" class="decor parallax d3" data-depth="22" src="./assets/cover/gif3.gif" alt="gif3"/>
-        <img id="usPhoto" class="usPhoto parallax u1" data-depth="18" src="./assets/cover/us.jpg" alt="us"/>
-
-        <!-- centered letter -->
-        <button class="letterStack" id="letterStack" type="button" aria-label="Open your valentine card">
-          <img class="letterGif" id="letterGif" src="./assets/cover/Letter_Flying.gif" alt="Letter"/>
-          <div class="letterHint scribbleTitle strokeText">Tap to open 💘</div>
-        </button>
-      </div>
+    <div class="buttons">
+      <button id="yes">Yes.</button>
+      <button id="no">Hell nah, Keysha!</button>
     </div>
+
+    <div id="rageText"></div>
+    <img id="rageGif" src="assets/question/bg2.gif">
   </section>
 
-  <!-- QUESTION -->
-  <section class="screen" id="screen-question">
-    <div class="questionBg">
-      <img id="questionBgImg" src="./assets/question/bg.gif" alt="bg"/>
-    </div>
+  <!-- SCREEN: SCHEDULE -->
+  <section class="screen" id="schedule">
+    <h1 class="title">Ok babe… it’s a date 💞</h1>
+    <p>Calendar will go here later.</p>
 
-    <div class="content questionContent">
-      <h1 id="questionTitle" class="scribbleTitle big strokeText">
-        Will you be my <span class="valWord">valentine</span>? 🥺💧🫶
-      </h1>
-
-      <div class="btnRow" id="questionButtons">
-        <button id="yesBtn" class="btn lined thick yesBtn btnTextStroke" type="button">Yes.</button>
-        <button id="noBtn" class="btn lined thick noBtn btnTextStroke" type="button">Hell nah, Keysha!</button>
-      </div>
-
-      <div id="rageNote" class="rageNote strokeText"></div>
-    </div>
+    <button id="giftBtn">Collect your first gift 🎁</button>
   </section>
 
-  <!-- SCHEDULE -->
-  <section class="screen" id="screen-schedule">
-    <div class="content scheduleWrap">
-      <h1 class="scribbleTitle big strokeText">Ok babe… it’s a date 💞</h1>
-      <p class="smallNote strokeText">Tap once to add to Apple Calendar.</p>
-
-      <div class="scheduleGrid">
-        <div class="scheduleCard">
-          <div class="scheduleName strokeText">💘 Long Distance Valentine Date</div>
-          <div class="scheduleDesc" id="scheduleDesc">(you’ll replace this text later)</div>
-
-          <a class="btn lined thick primary full" href="./calendar/valentine-date.ics" download>
-            Add to Apple Calendar 🍎
-          </a>
-
-          <div class="tiny">If it asks what to open with, choose Calendar.</div>
-        </div>
-
-        <div class="polaroids">
-          <div class="polaroid tilt1"><img src="./assets/schedule/polaroid1.jpg" alt="p1"/></div>
-          <div class="polaroid tilt2"><img src="./assets/schedule/polaroid2.jpg" alt="p2"/></div>
-          <div class="polaroid tilt3"><img src="./assets/schedule/polaroid3.jpg" alt="p3"/></div>
-          <div class="polaroid tilt4"><img src="./assets/schedule/polaroid4.jpg" alt="p4"/></div>
-        </div>
-      </div>
-
-      <div class="center">
-        <button id="giftBtn" class="btn lined thick primary" type="button">Collect your first gift 🎁</button>
-      </div>
-    </div>
+  <!-- SCREEN: GIFT -->
+  <section class="screen" id="gift">
+    <h1 class="title">I love you 💐</h1>
+    <img src="assets/gift/bouquet.png" class="bouquet">
+    <button onclick="location.reload()">Do it again 🔁</button>
   </section>
 
-  <!-- GIFT -->
-  <section class="screen" id="screen-gift">
-    <div class="content giftWrap">
-      <h1 class="scribbleTitle big strokeText wobble">I love you, baby! 🌹</h1>
-      <p class="smallNote strokeText">Can’t wait for our date.</p>
-
-      <div id="roseField" class="roseField" aria-hidden="true"></div>
-
-      <div class="center">
-        <button id="restartBtn" class="btn lined thick primary" type="button">Do it again! 🔁</button>
-      </div>
-    </div>
-  </section>
-
-  <script src="./app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
