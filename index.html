@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Valentine Date Invite 💘</title>
+  <title>Valentine Invite 💘</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,114 +14,112 @@
 <body>
   <div class="noise"></div>
 
-  <!-- Password Gate -->
+  <!-- Sparkles overlay (global, persists between screens) -->
+  <div class="sparkles" id="sparkles" aria-hidden="true"></div>
+
+  <!-- PASSWORD -->
   <section class="screen active" id="screen-password">
     <div class="content">
-      <div class="scribbleTitle big">Enter the secret password 💌</div>
-      <div class="smallNote">Our Love Day</div>
+      <h1 class="scribbleTitle big strokeText">Enter the secret password 💌</h1>
+      <p class="smallNote strokeText">Hint: Our Love Day</p>
 
       <div class="row">
-        <input id="pwInput" class="input" type="password" placeholder="••• •••" autocomplete="off" />
+        <input id="pwInput" class="input" type="password" placeholder="••• •••" autocomplete="off"/>
         <button id="pwBtn" class="btn lined thick primary">Unlock</button>
       </div>
 
-      <div id="pwError" class="error hidden">Nope 😼 Try again.</div>
+      <div id="pwError" class="error hidden"></div>
+      <div id="pwGossipHost"></div>
     </div>
   </section>
 
-  <!-- COVER / INVITATION -->
+  <!-- COVER -->
   <section class="screen" id="screen-cover">
     <div class="content coverContent">
-
-      <!-- headline is separate + forced on top -->
       <div class="coverHeadlineWrap">
-        <div class="coverHeadline scribbleTitle strokeText topLayer">
+        <h2 class="coverHeadline scribbleTitle strokeText topLayer">
           Open Your <span class="pinkWord">Valentine’s</span> Card 💗
-        </div>
+        </h2>
       </div>
 
       <div class="coverStage" id="parallaxArea">
+        <!-- background decor -->
+        <img id="gif1" class="decor parallax d1" data-depth="20" src="./assets/cover/gif1.gif" alt="gif1"/>
+        <img id="gif2" class="decor parallax d2" data-depth="26" src="./assets/cover/gif2.gif" alt="gif2"/>
+        <img id="gif3" class="decor parallax d3" data-depth="22" src="./assets/cover/gif3.gif" alt="gif3"/>
+        <img id="usPhoto" class="usPhoto parallax u1" data-depth="18" src="./assets/cover/us.jpg" alt="us"/>
 
-        <!-- BACK decor -->
-        <img id="gif1" class="decor parallax d1" data-depth="24" src="./assets/cover/gif1.gif" alt="Decor gif 1"/>
-        <img id="gif2" class="decor parallax d2" data-depth="30" src="./assets/cover/gif2.gif" alt="Decor gif 2"/>
-        <img id="gif3" class="decor parallax d3" data-depth="26" src="./assets/cover/gif3.gif" alt="Decor gif 3"/>
-
-        <!-- moved more left -->
-        <img class="usPhoto parallax u1" data-depth="20" src="./assets/cover/us.jpg" alt="Us photo"/>
-
-        <!-- CENTER letter -->
-        <div class="letterStack" id="letterStack" role="button" tabindex="0" aria-label="Open card">
-          <img class="letterGif" id="letterGif" src="./assets/cover/Letter_Flying.gif" alt="Letter Flying" />
-          <div class="letterHint strokeText">Tap to open 💘</div>
-        </div>
-
-        <!-- Sparkles (stay across screens) -->
-        <div class="sparkles" id="sparkles" aria-hidden="true"></div>
+        <!-- centered letter -->
+        <button class="letterStack" id="letterStack" type="button" aria-label="Open your valentine card">
+          <img class="letterGif" id="letterGif" src="./assets/cover/Letter_Flying.gif" alt="Letter"/>
+          <div class="letterHint scribbleTitle strokeText">Tap to open 💘</div>
+        </button>
       </div>
     </div>
   </section>
 
-  <!-- Question -->
+  <!-- QUESTION -->
   <section class="screen" id="screen-question">
     <div class="questionBg">
-      <img id="questionBgImg" src="./assets/question/bg.gif" alt="Cute background"/>
+      <img id="questionBgImg" src="./assets/question/bg.gif" alt="bg"/>
     </div>
 
-    <div class="content">
-      <div class="scribbleTitle big wobble">Will you be my valentine?</div>
+    <div class="content questionContent">
+      <h1 id="questionTitle" class="scribbleTitle big strokeText">
+        Will you be my <span class="valWord">valentine</span>? 🥺💧🫶
+      </h1>
 
-      <div class="btnRow">
-        <button id="yesBtn" class="btn lined thick yes">Yes.</button>
-        <button id="noBtn" class="btn lined thick no">Hell nah, Keysha!</button>
+      <div class="btnRow" id="questionButtons">
+        <button id="yesBtn" class="btn lined thick yesBtn btnTextStroke" type="button">Yes.</button>
+        <button id="noBtn" class="btn lined thick noBtn btnTextStroke" type="button">Hell nah, Keysha!</button>
       </div>
 
-      <div id="noCounter" class="smallNote"></div>
+      <div id="rageNote" class="rageNote strokeText"></div>
     </div>
   </section>
 
-  <!-- Schedule -->
+  <!-- SCHEDULE -->
   <section class="screen" id="screen-schedule">
     <div class="content scheduleWrap">
-      <div class="scribbleTitle big">Ok babe… it’s a date 💞</div>
-      <div class="smallNote">Click to add it to your Apple Calendar (one tap, one invite).</div>
+      <h1 class="scribbleTitle big strokeText">Ok babe… it’s a date 💞</h1>
+      <p class="smallNote strokeText">Tap once to add to Apple Calendar.</p>
 
       <div class="scheduleGrid">
         <div class="scheduleCard">
-          <div class="scheduleName">💘 Long Distance Valentine Date</div>
-          <div class="scheduleDesc" id="scheduleDesc">(You’ll replace this with the real plan.)</div>
+          <div class="scheduleName strokeText">💘 Long Distance Valentine Date</div>
+          <div class="scheduleDesc" id="scheduleDesc">(you’ll replace this text later)</div>
 
           <a class="btn lined thick primary full" href="./calendar/valentine-date.ics" download>
             Add to Apple Calendar 🍎
           </a>
 
-          <div class="tiny">If your phone asks what to open it with, choose Calendar.</div>
+          <div class="tiny">If it asks what to open with, choose Calendar.</div>
         </div>
 
         <div class="polaroids">
-          <div class="polaroid tilt1"><img src="./assets/schedule/polaroid1.jpg" alt="Polaroid 1"/></div>
-          <div class="polaroid tilt2"><img src="./assets/schedule/polaroid2.jpg" alt="Polaroid 2"/></div>
-          <div class="polaroid tilt3"><img src="./assets/schedule/polaroid3.jpg" alt="Polaroid 3"/></div>
-          <div class="polaroid tilt4"><img src="./assets/schedule/polaroid4.jpg" alt="Polaroid 4"/></div>
+          <div class="polaroid tilt1"><img src="./assets/schedule/polaroid1.jpg" alt="p1"/></div>
+          <div class="polaroid tilt2"><img src="./assets/schedule/polaroid2.jpg" alt="p2"/></div>
+          <div class="polaroid tilt3"><img src="./assets/schedule/polaroid3.jpg" alt="p3"/></div>
+          <div class="polaroid tilt4"><img src="./assets/schedule/polaroid4.jpg" alt="p4"/></div>
         </div>
       </div>
 
       <div class="center">
-        <button id="giftBtn" class="btn lined thick gift">Collect your first gift 🎁</button>
+        <button id="giftBtn" class="btn lined thick primary" type="button">Collect your first gift 🎁</button>
       </div>
     </div>
   </section>
 
-  <!-- Gift -->
+  <!-- GIFT -->
   <section class="screen" id="screen-gift">
     <div class="content giftWrap">
-      <div class="scribbleTitle big wobble">I love you, baby! 🌹</div>
-      <div class="smallNote">Can’t wait for our date.</div>
+      <h1 class="scribbleTitle big strokeText wobble">I love you, baby! 🌹</h1>
+      <p class="smallNote strokeText">Can’t wait for our date.</p>
 
       <div id="roseField" class="roseField" aria-hidden="true"></div>
 
       <div class="center">
-        <button id="restartBtn" class="btn lined thick primary">Do it again! 🔁</button>
+        <button id="restartBtn" class="btn lined thick primary" type="button">Do it again! 🔁</button>
       </div>
     </div>
   </section>
