@@ -19,10 +19,10 @@
   <section class="screen active" id="screen-password">
     <div class="content">
       <div class="scribbleTitle big">Enter the secret password 💌</div>
-      <div class="smallNote">(Hint: it’s our little phrase)</div>
+      <div class="smallNote">Our Love Day</div>
 
       <div class="row">
-        <input id="pwInput" class="input" type="text" placeholder="••• •••" autocomplete="off" />
+        <input id="pwInput" class="input" type="password" placeholder="••• •••" autocomplete="off" />
         <button id="pwBtn" class="btn lined thick primary">Unlock</button>
       </div>
 
@@ -39,22 +39,22 @@
         </div>
       </div>
 
-      <div class="coverStage" id="parallaxArea">
+      <div class="coverStage" id="parallaxArea" aria-label="Invitation stage">
 
         <!-- BACK decor (behind the letter) -->
-        <img class="decor parallax d1" data-depth="10" src="./assets/cover/gif1.gif" alt="Decor gif 1"/>
-        <img class="decor parallax d2" data-depth="14" src="./assets/cover/gif2.gif" alt="Decor gif 2"/>
-        <img class="decor parallax d3" data-depth="12" src="./assets/cover/gif3.gif" alt="Decor gif 3"/>
-        <img class="usPhoto parallax u1" data-depth="8" src="./assets/cover/us.jpg" alt="Us photo"/>
+        <img class="decor parallax d1" data-depth="22" src="./assets/cover/gif1.gif" alt="Decor gif 1"/>
+        <img class="decor parallax d2" data-depth="28" src="./assets/cover/gif2.gif" alt="Decor gif 2"/>
+        <img class="decor parallax d3" data-depth="24" src="./assets/cover/gif3.gif" alt="Decor gif 3"/>
+        <img class="usPhoto parallax u1" data-depth="18" src="./assets/cover/us.jpg" alt="Us photo"/>
 
         <!-- CENTER letter -->
-        <div class="letterStack" id="letterStack" role="button" tabindex="0" aria-label="Open letter">
-          <img class="letterGif" id="letterGif" src="./assets/cover/Letter_Flying.gif" alt="Letter Flying" />
+        <div class="letterStack" id="letterStack" role="button" tabindex="0" aria-label="Open card">
+          <img class="letterGif blend" id="letterGif" src="./assets/cover/Letter_Flying.gif" alt="Letter Flying" />
           <div class="letterHint">Tap to open 💘</div>
         </div>
 
-        <!-- Little sparkle overlay (optional, used on tap) -->
-        <div class="sparkles" id="sparkles"></div>
+        <!-- Sparkle burst layer -->
+        <div class="sparkles" id="sparkles" aria-hidden="true"></div>
       </div>
     </div>
   </section>
@@ -89,7 +89,7 @@
         <div class="scheduleCard">
           <div class="scheduleName">💘 Long Distance Valentine Date</div>
           <div class="scheduleDesc" id="scheduleDesc">
-            (We’ll fill the real time + plan later — you’ll replace this text.)
+            (You’ll replace this with the real plan.)
           </div>
 
           <a class="btn lined thick primary full" href="./calendar/valentine-date.ics" download>
