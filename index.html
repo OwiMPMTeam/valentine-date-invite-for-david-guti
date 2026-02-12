@@ -3,12 +3,24 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>valentine-date-invite-for-david-guti 💗</title>
 
-  <!-- GLUTEN FONT -->
+  <title>Valentines 2026 Gift for David 💖</title>
+
+  <!-- Link preview (iMessage / social) -->
+  <meta property="og:title" content="Valentines 2026 Gift for David 💖">
+  <meta property="og:description" content="A tiny interactive Valentine surprise 💗">
+  <meta property="og:type" content="website">
+  <!-- IMPORTANT: your image file name + path -->
+  <meta property="og:image" content="./assets/ui/link-preview.jpg">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:image" content="./assets/ui/link-preview.jpg">
+
+  <!-- GLUTEN (Thin 100 + ExtraLight 200) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Gluten:wght@400;600;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Gluten:wght@100;200&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="./style.css"/>
 </head>
@@ -17,11 +29,29 @@
   <div class="noise" aria-hidden="true"></div>
   <div class="sparkles" id="sparkles" aria-hidden="true"></div>
 
+  <!-- Tilt Permission Gate (iOS requires a tap) -->
+  <div class="tiltGate" id="tiltGate" aria-hidden="true">
+    <div class="tiltCard">
+      <div class="tiltTitle">Enable phone tilt? ✨</div>
+      <div class="tiltDesc">Makes the background move cute on iPhone.</div>
+      <button id="tiltBtn" class="btn lined thick primaryOutline" type="button">
+        <span class="btnStroke">Turn it on</span>
+      </button>
+      <button id="tiltSkip" class="btn lined thick noOutline" type="button">
+        <span class="btnStroke">Skip</span>
+      </button>
+    </div>
+  </div>
+
   <!-- PASSWORD -->
   <section class="screen active" id="screen-password">
     <div class="wrap">
-      <h1 class="title stroke">Enter the secret password ✨</h1>
-      <p class="sub stroke">Hint: <b>Our Love Day</b></p>
+      <h1 class="title stroke">Enter the secret password 💌</h1>
+
+      <!-- Hint aligned LEFT with the input width -->
+      <div class="hintLine stroke">
+        <span class="hintLabel">Hint:</span> <b>Our Love Day</b>
+      </div>
 
       <div class="pwRow">
         <input id="pwInput" class="pwInput" type="password" placeholder="••• •••" autocomplete="off" />
@@ -32,8 +62,8 @@
 
       <div id="pwMsg" class="pwMsg stroke"></div>
 
-      <!-- gossip gif should appear behind everything -->
-      <div class="pwBg" id="pwBg" aria-hidden="true"></div>
+      <!-- GIF placed near input (not full-screen) -->
+      <div class="pwGossip" id="pwGossip" aria-hidden="true"></div>
     </div>
   </section>
 
@@ -70,7 +100,7 @@
 
     <div class="wrap qWrap">
       <h1 class="title stroke">
-        Will you be my <span class="val">valentine</span>? 🥺💧🫶
+        Will you be my <span class="val">valentine</span>? 🥹🫶
       </h1>
 
       <div class="btnRow" id="btnRow">
@@ -93,7 +123,7 @@
       <h1 class="title stroke">Ok babe… it’s a date 💞</h1>
       <p class="sub stroke">Tap once to add to Apple Calendar.</p>
 
-      <div class="scheduleGrid">
+      <div class="scheduleGrid" id="scheduleParallaxArea">
         <div class="scheduleLeft">
           <div class="scheduleName stroke">💘 Long Distance Valentine Date</div>
           <div class="scheduleDesc">(you’ll replace this text later)</div>
@@ -103,20 +133,21 @@
           </a>
 
           <div class="tiny stroke">If it asks what to open with, choose Calendar.</div>
-
-          <div class="center">
-            <button id="giftBtn" class="btn lined thick primaryOutline" type="button">
-              <span class="btnStroke">Collect your first gift 🎁</span>
-            </button>
-          </div>
         </div>
 
         <div class="polaroids" aria-hidden="true">
-          <div class="polaroid p1"><img src="./assets/schedule/polaroid1.jpg" alt="p1"></div>
-          <div class="polaroid p2"><img src="./assets/schedule/polaroid2.jpg" alt="p2"></div>
-          <div class="polaroid p3"><img src="./assets/schedule/polaroid3.jpg" alt="p3"></div>
-          <div class="polaroid p4"><img src="./assets/schedule/polaroid4.jpg" alt="p4"></div>
+          <div class="polaroid parallax p1" data-depth="14" data-rot="-6"><img src="./assets/schedule/polaroid1.jpg" alt="p1"></div>
+          <div class="polaroid parallax p2" data-depth="18" data-rot="7"><img src="./assets/schedule/polaroid2.jpg" alt="p2"></div>
+          <div class="polaroid parallax p3" data-depth="12" data-rot="3"><img src="./assets/schedule/polaroid3.jpg" alt="p3"></div>
+          <div class="polaroid parallax p4" data-depth="16" data-rot="-4"><img src="./assets/schedule/polaroid4.jpg" alt="p4"></div>
         </div>
+      </div>
+
+      <!-- centered mid page -->
+      <div class="giftCenter">
+        <button id="giftBtn" class="btn lined thick yesOutline" type="button">
+          <span class="btnStroke">COLLECT YOUR FIRST GIFT 🎁</span>
+        </button>
       </div>
     </div>
   </section>
@@ -129,12 +160,11 @@
 
       <div class="bouquetWrap" aria-hidden="true">
         <div class="bouquet" id="bouquet"></div>
-        <div class="bouquetText stroke">I LOVE YOU 💗</div>
       </div>
 
       <div class="center">
         <button id="restartBtn" class="btn lined thick primaryOutline" type="button">
-          <span class="btnStroke">Do it again! 🔁</span>
+          <span class="btnStroke">Kisses! 🔁😘</span>
         </button>
       </div>
     </div>
