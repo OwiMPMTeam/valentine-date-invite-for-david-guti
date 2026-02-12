@@ -32,8 +32,10 @@
   <!-- COVER / INVITATION -->
   <section class="screen" id="screen-cover">
     <div class="content coverContent">
+
+      <!-- headline is separate + forced on top -->
       <div class="coverHeadlineWrap">
-        <div class="coverHeadline scribbleTitle">
+        <div class="coverHeadline scribbleTitle strokeText topLayer">
           Open Your <span class="pinkWord">Valentine’s</span> Card 💗
         </div>
       </div>
@@ -44,15 +46,17 @@
         <img id="gif1" class="decor parallax d1" data-depth="24" src="./assets/cover/gif1.gif" alt="Decor gif 1"/>
         <img id="gif2" class="decor parallax d2" data-depth="30" src="./assets/cover/gif2.gif" alt="Decor gif 2"/>
         <img id="gif3" class="decor parallax d3" data-depth="26" src="./assets/cover/gif3.gif" alt="Decor gif 3"/>
+
+        <!-- moved more left -->
         <img class="usPhoto parallax u1" data-depth="20" src="./assets/cover/us.jpg" alt="Us photo"/>
 
         <!-- CENTER letter -->
         <div class="letterStack" id="letterStack" role="button" tabindex="0" aria-label="Open card">
           <img class="letterGif" id="letterGif" src="./assets/cover/Letter_Flying.gif" alt="Letter Flying" />
-          <div class="letterHint">Tap to open 💘</div>
+          <div class="letterHint strokeText">Tap to open 💘</div>
         </div>
 
-        <!-- Sparkle burst layer -->
+        <!-- Sparkles (stay across screens) -->
         <div class="sparkles" id="sparkles" aria-hidden="true"></div>
       </div>
     </div>
@@ -80,9 +84,7 @@
   <section class="screen" id="screen-schedule">
     <div class="content scheduleWrap">
       <div class="scribbleTitle big">Ok babe… it’s a date 💞</div>
-      <div class="smallNote">
-        Click to add it to your Apple Calendar (one tap, one invite).
-      </div>
+      <div class="smallNote">Click to add it to your Apple Calendar (one tap, one invite).</div>
 
       <div class="scheduleGrid">
         <div class="scheduleCard">
