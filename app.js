@@ -23,7 +23,7 @@ function showScreen(key) {
 }
 
 // ============================================
-// PASSWORD GATE
+// PASSWORD GATE (unchanged)
 // ============================================
 
 const pwInput = $("pwInput");
@@ -70,28 +70,23 @@ function removeGossipGif() {
 
 function spawnGossipGifRandomly() {
   if (gossipGifEl) return;
-
   gossipGifEl = document.createElement("img");
   gossipGifEl.src = "./assets/password/gossip.gif";
   gossipGifEl.alt = "Gossip girl gif";
   gossipGifEl.className = "gossipGif";
-
   const x = Math.random() * 70 + 15;
   const y = Math.random() * 55 + 18;
   gossipGifEl.style.left = `${x}%`;
   gossipGifEl.style.top = `${y}%`;
-
   const rot = (Math.random() * 10) - 5;
   const sc = (Math.random() * 0.18) + 0.95;
   gossipGifEl.style.transform = `translate(-50%, -50%) rotate(${rot}deg) scale(${sc})`;
-
   const screen = $(screens.password);
   if (screen) screen.prepend(gossipGifEl);
 }
 
 function handlePasswordSubmit() {
   const val = pwInput ? pwInput.value : "";
-
   if (isValidPassword(val)) {
     if (pwError) pwError.classList.add("hidden");
     pwFails = 0;
@@ -99,9 +94,7 @@ function handlePasswordSubmit() {
     showScreen("cover");
     return;
   }
-
   pwFails += 1;
-
   if (pwFails === 1) return showPwMessage("Nope 😼 try again.", "error");
   if (pwFails === 2) { showPwMessage('Hint: “Gossip Girls: asked him for the weather”', "error"); return spawnGossipGifRandomly(); }
   showPwMessage("It’s October 3 🙄 girl… come on", "soft");
@@ -111,7 +104,7 @@ if (pwBtn) pwBtn.addEventListener("click", handlePasswordSubmit);
 if (pwInput) pwInput.addEventListener("keydown", (e) => { if (e.key === "Enter") handlePasswordSubmit(); });
 
 // ============================================
-// COVER: Parallax (strong)
+// COVER: Parallax (keep as-is)
 // ============================================
 
 const parallaxArea = $("parallaxArea");
@@ -147,10 +140,8 @@ function applyParallax() {
     const depth = Number(el.dataset.depth || "20");
     const dx = curX * depth * strength;
     const dy = curY * depth * strength;
-
     el.style.setProperty("--px", `${dx}px`);
     el.style.setProperty("--py", `${dy}px`);
-
     const rot = el.dataset.rot || "0deg";
     el.style.transform = `translate3d(${dx}px, ${dy}px, 0) rotate(${rot})`;
   });
@@ -177,15 +168,10 @@ function loop() {
     if (!e.touches || !e.touches[0]) return;
     setTargetFromClient(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
-
-  setInterval(() => {
-    targetX = clamp(targetX + (Math.random() * 0.22 - 0.11), -0.8, 0.8);
-    targetY = clamp(targetY + (Math.random() * 0.22 - 0.11), -0.8, 0.8);
-  }, 1800);
 })();
 
 // ============================================
-// SPARKLES (MORE + LONGER + FALL + persist across next screen)
+// SPARKLES (MORE + LONGER + fade slowly across next screen)
 // ============================================
 
 const sparkles = $("sparkles");
@@ -193,43 +179,44 @@ const sparkles = $("sparkles");
 function burstSparkles() {
   if (!sparkles) return;
 
-  const symbols = ["✨","⚡️","💫","💕","💞","🏳️‍🌈","✨","⚡️","💫","🏳️‍🌈","✨","💖"];
-  const sizes = ["s1","s2","s3","s4","s5"];
+  const symbols = ["✨","⚡️","💫","💕","💞","🏳️‍🌈","✨","⚡️","💫","🏳️‍🌈","💖","✨","✨"];
+  const sizes = ["s1","s2","s3","s4","s5","s6"];
 
-  // don't clear immediately; let them live
+  // Don't clear immediately — we want them to persist into next screen
+  // But do remove any old ones so it doesn't pile up forever:
   sparkles.innerHTML = "";
 
-  const count = 70; // MORE!
+  const count = 120; // MORE MORE MORE 😈
 
   for (let i = 0; i < count; i++) {
     const s = document.createElement("div");
     s.className = `spark ${sizes[Math.floor(Math.random() * sizes.length)]}`;
     s.textContent = symbols[Math.floor(Math.random() * symbols.length)];
 
-    // spawn across a wide field
-    const cx = Math.random() * 110 - 5; // -5%..105%
-    const cy = Math.random() * 70 + 5;  // 5%..75%
+    // Spawn across the whole viewport, a bit beyond edges
+    const cx = Math.random() * 120 - 10; // -10..110
+    const cy = Math.random() * 80;       // 0..80
     s.style.left = `${cx}%`;
     s.style.top = `${cy}%`;
 
-    // drift + fall
-    const dx = (Math.random() * 520 - 260).toFixed(0) + "px";
-    const dy = (Math.random() * 300 - 140).toFixed(0) + "px";
+    // drift
+    const dx = (Math.random() * 720 - 360).toFixed(0) + "px";
+    const dy = (Math.random() * 420 - 220).toFixed(0) + "px";
     s.style.setProperty("--dx", dx);
     s.style.setProperty("--dy", dy);
 
-    // stagger
-    s.style.animationDelay = `${Math.random() * 900}ms`;
+    // stagger (sparkle explosions then fall)
+    s.style.animationDelay = `${Math.random() * 1400}ms`;
 
     sparkles.appendChild(s);
   }
 
-  // clear after they finish (matches CSS 4200ms + delay up to 900ms)
-  setTimeout(() => { sparkles.innerHTML = ""; }, 5600);
+  // Let them fade out slowly even after next screen appears (7600ms + delay up to 1400ms)
+  setTimeout(() => { sparkles.innerHTML = ""; }, 9800);
 }
 
 // ============================================
-// COVER: Letter click
+// COVER: Letter click -> go to question
 // ============================================
 
 const letterStack = $("letterStack");
@@ -245,9 +232,12 @@ function goToQuestionFromCover() {
   if (parallaxArea) parallaxArea.classList.add("zooming");
 
   setTimeout(() => {
+    // reset for replay
     letterGif.src = "./assets/cover/Letter_Flying.gif";
     letterStack.classList.remove("zooming");
     if (parallaxArea) parallaxArea.classList.remove("zooming");
+
+    // move on — sparkles keep living because they're fixed + not cleared yet
     showScreen("question");
   }, 720);
 }
@@ -260,36 +250,107 @@ if (letterStack) {
 }
 
 // ============================================
-// QUESTION SCREEN
+// QUESTION SCREEN (your changes)
 // ============================================
 
 const yesBtn = $("yesBtn");
 const noBtn = $("noBtn");
 const questionBgImg = $("questionBgImg");
-let noClicks = 0;
+const noCounter = $("noCounter");
 
-function updateNoYesSizes() {
+let noClicks = 0;
+const maxNoClicks = 6;
+
+function ensureQuestionStylingOnce() {
+  // Text styling: make "valentine" red + emojis + stroke
+  const titleEl = document.querySelector(`#${screens.question} .scribbleTitle`);
+  if (titleEl && !titleEl.dataset.styled) {
+    titleEl.dataset.styled = "1";
+    titleEl.classList.add("strokeText");
+    titleEl.innerHTML = `Will you be my <span style="color: rgba(255,110,130,0.95)">valentine</span>? 🥺💧🫶`;
+  }
+
+  // Buttons: pastel colors + text stroke
+  if (yesBtn) {
+    yesBtn.classList.add("yesBtn", "btnTextStroke");
+    yesBtn.style.transformOrigin = "center";
+  }
+  if (noBtn) {
+    noBtn.classList.add("noBtn", "btnTextStroke");
+    noBtn.style.transformOrigin = "center";
+  }
+
+  // Counter text placement + default hidden message
+  if (noCounter) {
+    noCounter.classList.remove("hidden");
+    noCounter.classList.add("rageNote");
+    noCounter.innerHTML = "";
+  }
+}
+
+function updateRageText() {
+  if (!noCounter) return;
+
+  if (noClicks === 0) {
+    noCounter.innerHTML = "";
+    return;
+  }
+
+  const left = Math.max(0, maxNoClicks - noClicks);
+  noCounter.innerHTML = `Try me bitch. 😡 <span class="hot">${noClicks}</span> / ${maxNoClicks} (left: ${left})`;
+}
+
+function keepButtonsSideBySideWithGrowth() {
+  // We keep both inside same row. We scale with transform (doesn't push layout).
+  // And we slightly "nudge" YES toward NO so it feels like it's bullying it.
   if (!yesBtn || !noBtn) return;
 
-  const yesScale = 1 + (noClicks * 0.18);
-  const noScale  = Math.max(0.55, 1 - (noClicks * 0.10));
+  // Growth curve
+  const yesScale = 1 + (noClicks * 0.22);   // grows faster
+  const noScale  = Math.max(0.55, 1 - (noClicks * 0.11));
 
-  yesBtn.style.transform = `scale(${yesScale})`;
-  noBtn.style.transform  = `scale(${noScale})`;
+  // Apply as CSS variable for pound animation later
+  yesBtn.style.setProperty("--scale", `${yesScale}`);
 
-  if (noClicks >= 6) {
+  // Slight horizontal nudge to keep them close as YES gets big
+  const pull = Math.min(22, noClicks * 4); // px
+  yesBtn.style.transform = `translateX(${pull}px) scale(${yesScale})`;
+  noBtn.style.transform  = `translateX(${pull}px) scale(${noScale})`;
+}
+
+function onNoClick() {
+  noClicks += 1;
+
+  ensureQuestionStylingOnce();
+  updateRageText();
+  keepButtonsSideBySideWithGrowth();
+
+  if (noClicks >= maxNoClicks) {
+    // Disable NO and switch text
     noBtn.disabled = true;
-    noBtn.textContent = "Nope. Not an option 😌";
-    yesBtn.style.transform = "scale(2.2)";
+    noBtn.textContent = "Hehe. YOU WISH 🤪";
+
+    // Make YES pound so he must click it
+    yesBtn.classList.add("pound");
+
+    // Swap background GIF to the rage one (must exist)
     if (questionBgImg) questionBgImg.src = "./assets/question/bg2.gif";
   }
 }
 
-if (noBtn) noBtn.addEventListener("click", () => { noClicks += 1; updateNoYesSizes(); });
-if (yesBtn) yesBtn.addEventListener("click", () => showScreen("schedule"));
+function onYesClick() {
+  showScreen("schedule");
+}
+
+if (noBtn) noBtn.addEventListener("click", onNoClick);
+if (yesBtn) yesBtn.addEventListener("click", onYesClick);
+
+// When question screen becomes visible, apply styling
+// (We call it when we show screen, but we don't have hooks; easiest: run once now and again after cover transition.)
+ensureQuestionStylingOnce();
 
 // ============================================
-// SCHEDULE -> GIFT
+// SCHEDULE -> GIFT (unchanged)
 // ============================================
 
 const giftBtn = $("giftBtn");
@@ -311,7 +372,7 @@ if (giftBtn) {
 }
 
 // ============================================
-// RESTART
+// RESTART (reset everything)
 // ============================================
 
 const restartBtn = $("restartBtn");
@@ -328,8 +389,16 @@ function resetAll() {
     noBtn.disabled = false;
     noBtn.textContent = "Hell nah, Keysha!";
     noBtn.style.transform = "";
+    noBtn.classList.remove("noBtn", "btnTextStroke");
   }
-  if (yesBtn) yesBtn.style.transform = "";
+  if (yesBtn) {
+    yesBtn.style.transform = "";
+    yesBtn.classList.remove("yesBtn", "btnTextStroke", "pound");
+    yesBtn.style.removeProperty("--scale");
+  }
+
+  if (noCounter) noCounter.innerHTML = "";
+
   if (questionBgImg) questionBgImg.src = "./assets/question/bg.gif";
 
   if (letterGif) letterGif.src = "./assets/cover/Letter_Flying.gif";
@@ -338,6 +407,14 @@ function resetAll() {
   if (sparkles) sparkles.innerHTML = "";
 
   targetX = 0; targetY = 0; curX = 0; curY = 0;
+
+  // Remove styled flag so it re-renders nicely
+  const titleEl = document.querySelector(`#${screens.question} .scribbleTitle`);
+  if (titleEl) {
+    delete titleEl.dataset.styled;
+    titleEl.classList.remove("strokeText");
+    titleEl.textContent = "Will you be my valentine?";
+  }
 
   showScreen("password");
 }
