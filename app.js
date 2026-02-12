@@ -46,21 +46,10 @@ function normalizePw(raw) {
 function isValidPassword(input) {
   const v = normalizePw(input);
   const accepted = new Set([
-    "october 3",
-    "oct 3",
-    "october3",
-    "oct3",
-    "10/3",
-    "10-3",
-    "10 3",
-    "103",
-    "10 03",
-    "10/03",
-    "10-03",
-    "october 03",
-    "oct 03",
-    "october third",
-    "oct third",
+    "october 3","oct 3","october3","oct3",
+    "10/3","10-3","10 3","103",
+    "10 03","10/03","10-03","october 03","oct 03",
+    "october third","oct third",
   ]);
   return accepted.has(v);
 }
@@ -135,12 +124,11 @@ if (pwInput) {
 }
 
 // ============================================
-// COVER: Parallax (desktop + touch + phone tilt)
+// COVER: Parallax (stronger)
 // ============================================
 
 const parallaxArea = $("parallaxArea");
 let parallaxItems = [];
-let parallaxOn = false;
 
 let targetX = 0, targetY = 0; // -1..1
 let curX = 0, curY = 0;
@@ -157,38 +145,8 @@ function setTargetFromClient(clientX, clientY) {
   targetY = clamp(ny, -1, 1);
 }
 
-function applyParallax() {
-  // stronger parallax: multiply by ~1.35
-  const strength = 1.35;
-
-  parallaxItems.forEach((el) => {
-    const depth = Number(el.dataset.depth || "18");
-    const dx = curX * depth * strength;
-    const dy = curY * depth * strength;
-
-    // Store px/py for bg zoom animation CSS
-    el.style.setProperty("--px", `${dx}px`);
-    el.style.setProperty("--py", `${dy}px`);
-
-    // IMPORTANT: This overwrites transform, so we keep "base rotation"
-    // by using a data-rot attribute set once from computed style.
-    const rot = el.dataset.rot || "0deg";
-    el.style.transform = `translate3d(${dx}px, ${dy}px, 0) rotate(${rot})`;
-  });
-}
-
-function parallaxLoop() {
-  if (!parallaxOn) return;
-  curX = lerp(curX, targetX, 0.09);
-  curY = lerp(curY, targetY, 0.09);
-  applyParallax();
-  requestAnimationFrame(parallaxLoop);
-}
-
 function captureInitialRotations() {
   parallaxItems.forEach((el) => {
-    // read the inline rotation we set via CSS vars as a fallback:
-    // if it's a decor, we stored --r in CSS; for safety we detect class.
     if (el.classList.contains("d1")) el.dataset.rot = "-7deg";
     if (el.classList.contains("d2")) el.dataset.rot = "8deg";
     if (el.classList.contains("d3")) el.dataset.rot = "-5deg";
@@ -196,119 +154,108 @@ function captureInitialRotations() {
   });
 }
 
-function setupParallax() {
+function applyParallax() {
+  // stronger than before:
+  const strength = 1.85;
+
+  parallaxItems.forEach((el) => {
+    const depth = Number(el.dataset.depth || "20");
+    const dx = curX * depth * strength;
+    const dy = curY * depth * strength;
+
+    el.style.setProperty("--px", `${dx}px`);
+    el.style.setProperty("--py", `${dy}px`);
+
+    const rot = el.dataset.rot || "0deg";
+    el.style.transform = `translate3d(${dx}px, ${dy}px, 0) rotate(${rot})`;
+  });
+}
+
+function loop() {
+  curX = lerp(curX, targetX, 0.10);
+  curY = lerp(curY, targetY, 0.10);
+  applyParallax();
+  requestAnimationFrame(loop);
+}
+
+(function setupParallax(){
   if (!parallaxArea) return;
   parallaxItems = Array.from(parallaxArea.querySelectorAll(".parallax"));
   if (!parallaxItems.length) return;
-
   captureInitialRotations();
 
-  parallaxOn = true;
-  requestAnimationFrame(parallaxLoop);
+  requestAnimationFrame(loop);
 
-  // Desktop mouse
   parallaxArea.addEventListener("mousemove", (e) => {
     setTargetFromClient(e.clientX, e.clientY);
   }, { passive: true });
 
-  // Touch move (mobile “hover” substitute)
   parallaxArea.addEventListener("touchmove", (e) => {
     if (!e.touches || !e.touches[0]) return;
     setTargetFromClient(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
 
-  // If no movement, keep a gentle drift
+  // gentle drift when idle
   setInterval(() => {
-    // tiny wandering when user does nothing
-    targetX = clamp(targetX + (Math.random() * 0.2 - 0.1), -0.6, 0.6);
-    targetY = clamp(targetY + (Math.random() * 0.2 - 0.1), -0.6, 0.6);
-  }, 2200);
-}
-
-setupParallax();
-
-// Phone tilt parallax (optional; iOS requires permission)
-let deviceTiltEnabled = false;
-
-async function requestTiltPermissionIfNeeded() {
-  // iOS needs explicit permission for device orientation
-  try {
-    if (typeof DeviceOrientationEvent !== "undefined" &&
-        typeof DeviceOrientationEvent.requestPermission === "function") {
-      const res = await DeviceOrientationEvent.requestPermission();
-      deviceTiltEnabled = (res === "granted");
-    } else {
-      // Android/others usually just work
-      deviceTiltEnabled = true;
-    }
-  } catch (e) {
-    deviceTiltEnabled = false;
-  }
-}
-
-function enableDeviceTilt() {
-  if (!deviceTiltEnabled) return;
-
-  window.addEventListener("deviceorientation", (e) => {
-    // gamma: left/right (-90..90), beta: front/back (-180..180)
-    const g = clamp((e.gamma || 0) / 35, -1, 1);
-    const b = clamp((e.beta || 0) / 45, -1, 1);
-
-    // Use tilt to set target; keep subtle so it feels romantic not chaotic
-    targetX = lerp(targetX, g, 0.15);
-    targetY = lerp(targetY, b * 0.6, 0.15);
-  }, { passive: true });
-}
+    targetX = clamp(targetX + (Math.random() * 0.22 - 0.11), -0.75, 0.75);
+    targetY = clamp(targetY + (Math.random() * 0.22 - 0.11), -0.75, 0.75);
+  }, 1800);
+})();
 
 // ============================================
-// COVER: Letter tap -> swap GIF + sparkles + zoom + background zoom
+// COVER: Sparkles (bigger, more, longer, fall, persist into next screen)
 // ============================================
 
-const letterStack = $("letterStack");
-const letterGif = $("letterGif");
 const sparkles = $("sparkles");
 
 function burstSparkles() {
   if (!sparkles) return;
 
-  const symbols = ["✨","⚡️","💫","💕","✨","⚡️","✨","💞"];
+  const symbols = ["✨","⚡️","💫","💕","💞","🏳️‍🌈","✨","⚡️","💫","🏳️‍🌈"];
   const sizes = ["s1","s2","s3","s4"];
 
+  // DO NOT clear immediately — we let them live through transition
   sparkles.innerHTML = "";
 
-  for (let i = 0; i < 16; i++) {
+  // more sparkles
+  const count = 34;
+
+  for (let i = 0; i < count; i++) {
     const s = document.createElement("div");
     s.className = `spark ${sizes[Math.floor(Math.random() * sizes.length)]}`;
     s.textContent = symbols[Math.floor(Math.random() * symbols.length)];
 
-    // cluster around the letter (center area)
-    const cx = 50 + (Math.random() * 34 - 17);
-    const cy = 50 + (Math.random() * 34 - 17);
+    // wider spread across screen
+    const cx = 50 + (Math.random() * 90 - 45);  // much wider
+    const cy = 46 + (Math.random() * 70 - 35);
     s.style.left = `${cx}%`;
     s.style.top = `${cy}%`;
 
-    // drift
-    const dx = (Math.random() * 220 - 110).toFixed(0) + "px";
-    const dy = (Math.random() * 200 - 140).toFixed(0) + "px";
+    // drift direction + fall
+    const dx = (Math.random() * 420 - 210).toFixed(0) + "px";
+    const dy = (Math.random() * 260 - 140).toFixed(0) + "px";
     s.style.setProperty("--dx", dx);
     s.style.setProperty("--dy", dy);
 
-    // stagger
-    s.style.animationDelay = `${Math.random() * 160}ms`;
+    // stagger so it feels like fireworks
+    s.style.animationDelay = `${Math.random() * 240}ms`;
 
     sparkles.appendChild(s);
   }
 
-  setTimeout(() => { sparkles.innerHTML = ""; }, 980);
+  // keep sparkles visible even after next screen appears
+  setTimeout(() => { sparkles.innerHTML = ""; }, 1900);
 }
+
+// ============================================
+// COVER: Letter click
+// ============================================
+
+const letterStack = $("letterStack");
+const letterGif = $("letterGif");
 
 function goToQuestionFromCover() {
   if (!letterStack || !letterGif) return;
-
-  // (optional) ask for tilt permission once we have user interaction
-  requestTiltPermissionIfNeeded().then(() => {
-    if (deviceTiltEnabled) enableDeviceTilt();
-  });
 
   // swap to opening gif
   letterGif.src = "./assets/cover/Letter_Opening.gif";
@@ -320,11 +267,8 @@ function goToQuestionFromCover() {
   letterStack.classList.add("zooming");
   if (parallaxArea) parallaxArea.classList.add("zooming");
 
-  // boost parallax while zooming for extra drama
-  targetX = clamp(targetX * 1.35, -1, 1);
-  targetY = clamp(targetY * 1.35, -1, 1);
-
   setTimeout(() => {
+    // do NOT clear sparkles yet (they stay a bit)
     // reset for replay
     letterGif.src = "./assets/cover/Letter_Flying.gif";
     letterStack.classList.remove("zooming");
@@ -340,6 +284,24 @@ if (letterStack) {
     if (e.key === "Enter" || e.key === " ") goToQuestionFromCover();
   });
 }
+
+// ============================================
+// GIF2 loop hack (only if it was exported as play-once)
+// This reassigns src every few seconds to "replay" it.
+// If your gif is truly 1-loop, this makes it feel looping.
+// ============================================
+
+(function forceGif2Loop(){
+  const gif2 = $("gif2");
+  if (!gif2) return;
+
+  const baseSrc = gif2.getAttribute("src") || "./assets/cover/gif2.gif";
+
+  setInterval(() => {
+    // cache-bust to force replay
+    gif2.src = `${baseSrc}?v=${Date.now()}`;
+  }, 5200); // adjust if the gif is longer/shorter
+})();
 
 // ============================================
 // QUESTION SCREEN
@@ -363,7 +325,7 @@ function updateNoYesSizes() {
     noBtn.disabled = true;
     noBtn.textContent = "Nope. Not an option 😌";
     yesBtn.style.transform = "scale(2.2)";
-    if (questionBgImg) questionBgImg.src = "./assets/question/bg2.gif"; // optional
+    if (questionBgImg) questionBgImg.src = "./assets/question/bg2.gif";
   }
 }
 
@@ -429,9 +391,7 @@ function resetAll() {
   if (parallaxArea) parallaxArea.classList.remove("zooming");
   if (sparkles) sparkles.innerHTML = "";
 
-  // reset parallax targets so it centers nicely
-  targetX = 0; targetY = 0;
-  curX = 0; curY = 0;
+  targetX = 0; targetY = 0; curX = 0; curY = 0;
 
   showScreen("password");
 }
