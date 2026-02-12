@@ -72,7 +72,7 @@ function setPwHintUI() {
   // Make it "mysterious" with dots + correct hint copy
   // We’ll add the hint line dynamically if it exists.
   const hintEl = document.querySelector("#screen-password .smallNote");
-  if (hintEl) hintEl.textContent = "Our Love Day";
+  if (hintEl) hintEl.textContent = "Hint: Our Love Day 🥰";
 
   // Make input masked (dots)
   if (pwInput) pwInput.type = "password";
