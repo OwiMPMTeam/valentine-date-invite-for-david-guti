@@ -10,6 +10,14 @@ function showScreen(id){
 ========================= */
 const sparkleSfx = $("sparkleSfx");
 const bgMusic = $("bgMusic");
+
+// NEW
+const noLastClickSfx = new Audio("./assets/audio/no-last-click.mp3");
+noLastClickSfx.preload = "auto";
+
+const rosesSfx = new Audio("./assets/audio/roses-appear.mp3");
+rosesSfx.preload = "auto";
+
 let bgStarted = false;
 
 function tryStartBgMusic(){
@@ -23,6 +31,20 @@ function playSparkleSfx(){
   sparkleSfx.currentTime = 0;
   sparkleSfx.volume = 0.85;
   sparkleSfx.play().catch(()=>{});
+}
+function playNoLastClickSfx(){
+  try{
+    noLastClickSfx.currentTime = 0;
+    noLastClickSfx.volume = 0.95;
+    noLastClickSfx.play().catch(()=>{});
+  } catch {}
+}
+function playRosesSfx(){
+  try{
+    rosesSfx.currentTime = 0;
+    rosesSfx.volume = 0.95;
+    rosesSfx.play().catch(()=>{});
+  } catch {}
 }
 
 /* =========================
@@ -55,7 +77,7 @@ function enableTilt(){
 }
 
 async function handleTiltEnable(){
-  tryStartBgMusic(); // start music on first user tap
+  tryStartBgMusic();
   try{
     const ok = await requestTiltPermission();
     if (ok) enableTilt();
@@ -68,7 +90,7 @@ async function handleTiltEnable(){
 
 tiltBtn?.addEventListener("click", handleTiltEnable);
 tiltSkip?.addEventListener("click", () => {
-  tryStartBgMusic(); // start music on first user tap even if skip tilt
+  tryStartBgMusic();
   tiltGate?.classList.add("hidden");
 });
 
@@ -118,7 +140,7 @@ function clearGossip(){
 }
 
 function submitPw(){
-  tryStartBgMusic(); // any interaction can start bg music
+  tryStartBgMusic();
 
   const v = pwInput.value || "";
   if (validPw(v)){
@@ -265,7 +287,8 @@ letterBtn?.addEventListener("click", () => {
 });
 
 /* =========================
-   QUESTION: grow YES both directions + affect UI (not bg)
+   QUESTION: FIX — only YES grows (not both)
+   + play special SFX on final "No" click
 ========================= */
 const yesBtn = $("yesBtn");
 const noBtn  = $("noBtn");
@@ -277,22 +300,22 @@ let noClicks = 0;
 const maxClicks = 6;
 
 function updateButtons(){
-  // side-by-side resize (no overlap)
-  const yesGrow = 1 + (noClicks * 1.10);
-  const noGrow  = Math.max(0.35, 1 - (noClicks * 0.12));
-  yesBtn.style.flex = `${yesGrow} 1 0%`;
-  noBtn.style.flex  = `${noGrow} 1 0%`;
+  // keep NO mostly steady (so it doesn't look like both are growing)
+  const noFlex = 1;
+  const yesFlex = 1 + (noClicks * 1.35);
 
-  // grow YES horizontally + vertically
-  const yesScaleX = 1 + (noClicks * 0.18);
-  const yesScaleY = 1 + (noClicks * 0.10);
-  const noScaleX  = Math.max(0.72, 1 - (noClicks * 0.06));
-  const noScaleY  = Math.max(0.78, 1 - (noClicks * 0.04));
+  yesBtn.style.flex = `${yesFlex} 1 0%`;
+  noBtn.style.flex  = `${noFlex} 1 0%`;
 
+  // YES grows both ways; NO only shrinks a bit
+  const yesScaleX = 1 + (noClicks * 0.20);
+  const yesScaleY = 1 + (noClicks * 0.12);
   yesBtn.style.transform = `scale(${yesScaleX}, ${yesScaleY})`;
-  noBtn.style.transform  = `scale(${noScaleX}, ${noScaleY})`;
 
-  // affect UI container slightly (question + buttons), NOT background gif
+  const noScale = Math.max(0.76, 1 - (noClicks * 0.05));
+  noBtn.style.transform = `scale(${noScale})`;
+
+  // UI container grows a bit (question + buttons), NOT background gif
   const uiScale = 1 + (noClicks * 0.03);
   if (qWrap) qWrap.style.transform = `scale(${uiScale})`;
 
@@ -302,7 +325,7 @@ function updateButtons(){
     noBtn.disabled = true;
     qBgImg.src = "./assets/question/bg_final.gif";
 
-    // pound YES
+    // Pound YES
     yesBtn.animate(
       [
         { transform: `scale(${yesScaleX}, ${yesScaleY})` },
@@ -317,7 +340,14 @@ function updateButtons(){
 noBtn?.addEventListener("click", () => {
   tryStartBgMusic();
   if (noBtn.disabled) return;
+
   noClicks += 1;
+
+  // play special SFX exactly on the last "no" click (when YES hits max)
+  if (noClicks === maxClicks){
+    playNoLastClickSfx();
+  }
+
   updateButtons();
 });
 
@@ -338,12 +368,15 @@ $("giftBtn")?.addEventListener("click", () => {
 });
 
 /* =========================
-   GIFT: bouquet (unchanged vibe)
+   GIFT: bouquet + SFX on appear
 ========================= */
 const bouquet = $("bouquet");
 
 function buildBouquet(){
   if (!bouquet) return;
+
+  playRosesSfx(); // NEW: sound when bouquet appears
+
   bouquet.innerHTML = "";
 
   const coords = [
