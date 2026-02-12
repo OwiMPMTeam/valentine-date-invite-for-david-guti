@@ -30,23 +30,24 @@ body{
 ---------------------------- */
 .noise{
   position:fixed;
-  inset:-20%;
+  inset:-25%;
   pointer-events:none;
-  opacity:0.12;
+  opacity:0.14;
   background-image: url("./assets/ui/noise.png");
-  background-size: 260px 260px;
+  background-size: 240px 240px;
   mix-blend-mode:multiply;
-  animation: noiseFlicker 0.7s steps(2, end) infinite;
+  animation: noiseFlicker 0.55s steps(2, end) infinite;
   transform: translateZ(0);
   z-index: 0;
 }
 
 @keyframes noiseFlicker{
-  0%   { transform: translate(0,0); opacity:0.10; }
-  25%  { transform: translate(-1.5%, 1%); opacity:0.14; }
-  50%  { transform: translate(1%, -1.2%); opacity:0.11; }
-  75%  { transform: translate(-0.8%, -0.6%); opacity:0.15; }
-  100% { transform: translate(0,0); opacity:0.12; }
+  0%   { transform: translate(0,0); opacity:0.11; }
+  20%  { transform: translate(-1.8%, 1.2%); opacity:0.16; }
+  40%  { transform: translate(1.2%, -1.4%); opacity:0.12; }
+  60%  { transform: translate(-1.0%, -0.8%); opacity:0.17; }
+  80%  { transform: translate(0.8%, 0.6%); opacity:0.13; }
+  100% { transform: translate(0,0); opacity:0.14; }
 }
 
 /* ---------------------------
@@ -71,26 +72,17 @@ body{
   width: min(1100px, 94vw);
 }
 
-/* Subtle screen transition */
-.fadeIn{
-  animation: fadeIn .28s ease both;
-}
-@keyframes fadeIn{
-  from { opacity:0; transform: translateY(6px); }
-  to   { opacity:1; transform: translateY(0); }
-}
-
 /* ---------------------------
-   Typography (scribbly vibe)
+   Typography (animated scribble)
 ---------------------------- */
 .scribbleTitle{
   display:inline-block;
   letter-spacing: 0.2px;
   position:relative;
-  animation: scribbleJitter 0.55s steps(2, end) infinite;
+  animation: scribbleJitter 0.65s steps(2, end) infinite;
   text-shadow:
-    0.6px 0 rgba(0,0,0,0.18),
-    -0.6px 0 rgba(0,0,0,0.10);
+    0.8px 0 rgba(0,0,0,0.18),
+    -0.8px 0 rgba(0,0,0,0.10);
 }
 
 .scribbleTitle.big{
@@ -111,9 +103,9 @@ body{
 }
 
 @keyframes scribbleJitter{
-  0%   { transform: translate(0px,0px) rotate(-0.4deg); filter:none; }
-  50%  { transform: translate(0.6px,-0.3px) rotate(0.5deg); filter: contrast(1.03); }
-  100% { transform: translate(-0.4px,0.4px) rotate(-0.2deg); filter:none; }
+  0%   { transform: translate(0px,0px) rotate(-0.35deg); filter:none; }
+  50%  { transform: translate(0.8px,-0.4px) rotate(0.45deg); filter: contrast(1.03); }
+  100% { transform: translate(-0.5px,0.6px) rotate(-0.2deg); filter:none; }
 }
 
 .wobble{
@@ -155,98 +147,104 @@ body{
 
 .hidden{ display:none; }
 
-/* ---------------------------
-   Scribble Buttons using YOUR SVG
----------------------------- */
-.scribble-btn{
-  position:relative;
+/* =========================================================
+   BUTTONS — super organic hand-drawn scribble vibe
+   (no SVG, but more uneven/noisy + animated)
+========================================================= */
+.btn{
+  position: relative;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+
   background: transparent;
   color: var(--ink);
-  border: none;                 /* border is SVG now */
-  border-radius: 22px;
+
+  border: none;
   padding: 16px 22px;
   font-size: 22px;
-  cursor:pointer;
+  cursor: pointer;
   font-family: "Gluten", system-ui;
   letter-spacing: 0.2px;
+
   user-select:none;
+  text-decoration:none;
+  isolation:isolate;
   transform: translateZ(0);
 }
 
-.scribble-svg{
-  isolation: isolate;
-}
-
-.scribble-svg .btnText{
-  position:relative;
-  z-index: 2;
-}
-
-.scribble-svg .btnScribble{
+/* The scribbly “ink outline” */
+.btn.scribble::before,
+.btn.scribble::after{
+  content:"";
   position:absolute;
-  inset:-14px;                  /* looseness of border */
-  width: calc(100% + 28px);
-  height: calc(100% + 28px);
-  z-index: 1;
+  inset:-10px -12px -12px -10px;
+  border: 3px solid currentColor;
+  border-radius: 26px;
   pointer-events:none;
-  overflow: visible;
-  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.10));
-  animation: btnScribbleJitter 0.65s steps(2,end) infinite;
-  transform-origin: center;
+  z-index:-1;
+
+  /* uneven edges / hand drawn energy */
+  filter:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='3.2'/%3E%3C/filter%3E%3C/svg%3E%23n");
 }
 
-/* Make sure lines look like ink */
-.scribble-svg .btnScribble *{
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 10;
-  stroke-linecap: round;
-  stroke-linejoin: round;
+/* Second stroke for “double pen line” look */
+.btn.scribble::after{
+  inset:-14px -16px -16px -14px;
+  opacity:0.38;
+  transform: rotate(-1.2deg);
 }
 
-@keyframes btnScribbleJitter{
-  0%   { transform: rotate(-0.35deg) translate(0px, 0px); }
-  50%  { transform: rotate(0.45deg) translate(0.8px, -0.4px); }
-  100% { transform: rotate(-0.15deg) translate(-0.4px, 0.6px); }
+/* animated micro-wobble (framey) */
+.btn.scribble{
+  animation: btnWiggle 1.05s steps(2,end) infinite;
 }
 
-/* Hover: quicker alive */
-.scribble-btn:hover .btnScribble{
-  animation-duration: 0.45s;
+@keyframes btnWiggle{
+  0%   { transform: rotate(-0.2deg) translate(0,0); }
+  50%  { transform: rotate(0.35deg) translate(0.7px,-0.4px); }
+  100% { transform: rotate(-0.1deg) translate(-0.4px,0.6px); }
 }
 
-/* Hover: optional “draw” pop */
-.scribble-btn:hover .btnScribble *{
-  stroke-dasharray: 2600;
-  stroke-dashoffset: 2600;
-  animation: drawScribble 0.9s steps(2,end) forwards;
-}
-@keyframes drawScribble{
-  to { stroke-dashoffset: 0; }
+/* Hover: feels more alive */
+.btn.scribble:hover{
+  animation-duration: 0.65s;
 }
 
-.scribble-btn:active{
+/* Subtle “paper highlight” */
+.btn.scribble span,
+.btn.scribble{
+  -webkit-tap-highlight-color: transparent;
+}
+
+.btn.scribble:active{
   transform: scale(0.985);
 }
 
-.scribble-btn:disabled{
-  opacity: 0.25;
+/* Disabled (for “Hell nah” after 6 clicks) */
+.btn:disabled{
+  opacity: 0.28;
   cursor: not-allowed;
   filter: grayscale(1);
 }
+.btn:disabled::before,
+.btn:disabled::after{
+  opacity: 0.18;
+}
+
+/* Button color variants */
+.btn.primary{ color: rgba(255,90,155,0.95); }
+.btn.no{ color: rgba(0,0,0,0.65); }
+.btn.yes{ color: rgba(0,0,0,0.88); }
+.btn.gift{ color: rgba(255,90,155,0.75); }
 
 .full{
   width:100%;
-  display:inline-block;
+  display:inline-flex;
   text-align:center;
-  text-decoration:none;
 }
-
-/* Button color variants (ink color) */
-.scribble-btn.primary{ color: rgba(255,90,155,0.95); }
-.scribble-btn.no{ color: rgba(0,0,0,0.65); }
-.scribble-btn.yes{ color: rgba(0,0,0,0.88); }
-.scribble-btn.gift{ color: rgba(255,90,155,0.75); }
 
 /* ---------------------------
    Cover screen
@@ -302,6 +300,11 @@ body{
   opacity: 0.92;
 }
 
+/* app.js toggles .opening on letterStack */
+.opening .letterImg{
+  transform: scale(1.08) rotate(-2deg);
+}
+
 .decorArea{
   position:relative;
   width: min(520px, 92vw);
@@ -340,11 +343,6 @@ body{
   border: 10px solid rgba(255,255,255,0.55);
 }
 
-/* Letter “opening” state (app.js toggles .opening on letterStack) */
-.opening .letterImg{
-  transform: scale(1.08) rotate(-2deg);
-}
-
 /* ---------------------------
    Question screen (GIF background)
 ---------------------------- */
@@ -370,17 +368,13 @@ body{
   align-items:center;
 }
 
-.btnRow .scribble-btn{
+.btnRow .btn{
   min-width: 180px;
 }
 
 /* ---------------------------
    Schedule screen
 ---------------------------- */
-.scheduleWrap{
-  width: min(1100px, 94vw);
-}
-
 .scheduleGrid{
   display:grid;
   grid-template-columns: 1fr 1fr;
@@ -391,10 +385,6 @@ body{
 
 @media (max-width: 900px){
   .scheduleGrid{ grid-template-columns: 1fr; }
-}
-
-.scheduleCard{
-  padding-top: 8px;
 }
 
 .scheduleName{
@@ -449,9 +439,7 @@ body{
 /* ---------------------------
    Gift screen
 ---------------------------- */
-.giftWrap{
-  text-align:center;
-}
+.giftWrap{ text-align:center; }
 
 .roseField{
   margin: 18px auto 10px;
