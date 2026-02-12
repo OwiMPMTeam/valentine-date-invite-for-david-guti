@@ -6,6 +6,26 @@ function showScreen(id){
 }
 
 /* =========================
+   AUDIO
+========================= */
+const sparkleSfx = $("sparkleSfx");
+const bgMusic = $("bgMusic");
+let bgStarted = false;
+
+function tryStartBgMusic(){
+  if (bgStarted || !bgMusic) return;
+  bgStarted = true;
+  bgMusic.volume = 0.35;
+  bgMusic.play().catch(()=>{});
+}
+function playSparkleSfx(){
+  if (!sparkleSfx) return;
+  sparkleSfx.currentTime = 0;
+  sparkleSfx.volume = 0.85;
+  sparkleSfx.play().catch(()=>{});
+}
+
+/* =========================
    Tilt Permission Gate (iOS requires a tap)
 ========================= */
 const tiltGate = $("tiltGate");
@@ -16,28 +36,26 @@ let tiltEnabled = false;
 let tiltX = 0, tiltY = 0;
 
 async function requestTiltPermission(){
-  // iOS Safari requires requestPermission()
   if (typeof DeviceOrientationEvent !== "undefined" &&
       typeof DeviceOrientationEvent.requestPermission === "function") {
     const res = await DeviceOrientationEvent.requestPermission();
     return res === "granted";
   }
-  // non-iOS browsers: no permission needed
   return true;
 }
 
 function enableTilt(){
   tiltEnabled = true;
   window.addEventListener("deviceorientation", (e) => {
-    // gamma: left-right, beta: front-back
-    const gamma = e.gamma ?? 0; // -90..90
-    const beta  = e.beta ?? 0;  // -180..180
+    const gamma = e.gamma ?? 0;
+    const beta  = e.beta ?? 0;
     tiltX = Math.max(-1, Math.min(1, gamma / 25));
     tiltY = Math.max(-1, Math.min(1, beta / 35));
   }, { passive:true });
 }
 
 async function handleTiltEnable(){
+  tryStartBgMusic(); // start music on first user tap
   try{
     const ok = await requestTiltPermission();
     if (ok) enableTilt();
@@ -49,7 +67,10 @@ async function handleTiltEnable(){
 }
 
 tiltBtn?.addEventListener("click", handleTiltEnable);
-tiltSkip?.addEventListener("click", () => tiltGate?.classList.add("hidden"));
+tiltSkip?.addEventListener("click", () => {
+  tryStartBgMusic(); // start music on first user tap even if skip tilt
+  tiltGate?.classList.add("hidden");
+});
 
 /* =========================
    PASSWORD
@@ -97,6 +118,8 @@ function clearGossip(){
 }
 
 function submitPw(){
+  tryStartBgMusic(); // any interaction can start bg music
+
   const v = pwInput.value || "";
   if (validPw(v)){
     fails = 0;
@@ -108,7 +131,6 @@ function submitPw(){
 
   fails += 1;
 
-  // 3 tries until GIF + final hint
   if (fails === 1){
     setPwMsg("Nope 😼 try again.");
   } else if (fails === 2){
@@ -126,35 +148,34 @@ pwBtn?.addEventListener("click", submitPw);
 pwInput?.addEventListener("keydown", (e) => { if (e.key === "Enter") submitPw(); });
 
 /* =========================
-   SPARKLES (fireworks + fall)
+   SPARKLES (fireworks + fall) + SOUND
 ========================= */
 const sparkles = $("sparkles");
 
 function burstSparkles(){
   if (!sparkles) return;
+
+  playSparkleSfx();
+
   const symbols = ["✨","⚡️","💫","💕","🏳️‍🌈","💖","✨","⚡️"];
   const sizes = ["s1","s2","s3","s4","s5"];
 
   sparkles.innerHTML = "";
 
-  const count = 220; // cover the screen
+  const count = 220;
   for (let i=0; i<count; i++){
     const s = document.createElement("div");
     s.className = `spark ${sizes[Math.floor(Math.random()*sizes.length)]}`;
     s.textContent = symbols[Math.floor(Math.random()*symbols.length)];
 
-    // Boom origin near the letter (center-ish)
     const originX = 50 + (Math.random()*10 - 5);
     const originY = 35 + (Math.random()*10 - 5);
 
     s.style.left = `${originX}%`;
     s.style.top  = `${originY}%`;
 
-    // boom vectors
     s.style.setProperty("--bx", `${Math.random()*520 - 260}px`);
     s.style.setProperty("--by", `${Math.random()*380 - 190}px`);
-
-    // drift vectors
     s.style.setProperty("--dx", `${Math.random()*900 - 450}px`);
     s.style.setProperty("--dy", `${Math.random()*520 - 260}px`);
 
@@ -162,13 +183,11 @@ function burstSparkles(){
     sparkles.appendChild(s);
   }
 
-  // keep them visible into next screen
   setTimeout(() => { sparkles.innerHTML = ""; }, 11500);
 }
 
 /* =========================
-   Parallax (mouse + tilt)
-   Works for cover + schedule
+   Parallax (mouse + touch + tilt)
 ========================= */
 function attachParallax(areaId){
   const area = $(areaId);
@@ -180,7 +199,6 @@ function attachParallax(areaId){
   let tx=0, ty=0, cx=0, cy=0;
 
   function apply(){
-    // blend mouse/touch + tilt
     const mx = cx + (tiltEnabled ? tiltX * 0.35 : 0);
     const my = cy + (tiltEnabled ? tiltY * 0.35 : 0);
 
@@ -233,12 +251,12 @@ const letterImg = $("letterImg");
 const parallaxArea = $("parallaxArea");
 
 letterBtn?.addEventListener("click", () => {
+  tryStartBgMusic();
   burstSparkles();
 
-  // rapid zoom moment
   parallaxArea?.classList.add("zooming");
-
   letterImg.src = "./assets/cover/Letter_Opening.gif";
+
   setTimeout(() => {
     parallaxArea?.classList.remove("zooming");
     letterImg.src = "./assets/cover/Letter_Flying.gif";
@@ -247,30 +265,36 @@ letterBtn?.addEventListener("click", () => {
 });
 
 /* =========================
-   QUESTION (grow YES to ~1/8 page width after 6 clicks)
+   QUESTION: grow YES both directions + affect UI (not bg)
 ========================= */
 const yesBtn = $("yesBtn");
 const noBtn  = $("noBtn");
 const rageLine = $("rageLine");
 const qBgImg = $("qBgImg");
-const btnRow = $("btnRow");
+const qWrap = $("qWrap");
 
 let noClicks = 0;
 const maxClicks = 6;
 
 function updateButtons(){
-  // Use flex-grow so they resize next to each other (no overlap)
-  const yesGrow = 1 + (noClicks * 1.15);  // yes gets BIG
-  const noGrow  = Math.max(0.35, 1 - (noClicks * 0.12)); // no gets smaller
-
+  // side-by-side resize (no overlap)
+  const yesGrow = 1 + (noClicks * 1.10);
+  const noGrow  = Math.max(0.35, 1 - (noClicks * 0.12));
   yesBtn.style.flex = `${yesGrow} 1 0%`;
   noBtn.style.flex  = `${noGrow} 1 0%`;
 
-  // Also scale slightly for drama, but still side-by-side
-  const yesScale = 1 + (noClicks * 0.14);
-  const noScale  = Math.max(0.72, 1 - (noClicks * 0.06));
-  yesBtn.style.transform = `scale(${yesScale})`;
-  noBtn.style.transform  = `scale(${noScale})`;
+  // grow YES horizontally + vertically
+  const yesScaleX = 1 + (noClicks * 0.18);
+  const yesScaleY = 1 + (noClicks * 0.10);
+  const noScaleX  = Math.max(0.72, 1 - (noClicks * 0.06));
+  const noScaleY  = Math.max(0.78, 1 - (noClicks * 0.04));
+
+  yesBtn.style.transform = `scale(${yesScaleX}, ${yesScaleY})`;
+  noBtn.style.transform  = `scale(${noScaleX}, ${noScaleY})`;
+
+  // affect UI container slightly (question + buttons), NOT background gif
+  const uiScale = 1 + (noClicks * 0.03);
+  if (qWrap) qWrap.style.transform = `scale(${uiScale})`;
 
   rageLine.textContent = noClicks > 0 ? `Try me bitch. 😡  ${noClicks} / ${maxClicks}` : "";
 
@@ -278,12 +302,12 @@ function updateButtons(){
     noBtn.disabled = true;
     qBgImg.src = "./assets/question/bg_final.gif";
 
-    // Pound YES
+    // pound YES
     yesBtn.animate(
       [
-        { transform: `scale(${yesScale})` },
-        { transform: `scale(${yesScale * 1.08})` },
-        { transform: `scale(${yesScale})` },
+        { transform: `scale(${yesScaleX}, ${yesScaleY})` },
+        { transform: `scale(${yesScaleX * 1.07}, ${yesScaleY * 1.08})` },
+        { transform: `scale(${yesScaleX}, ${yesScaleY})` },
       ],
       { duration: 650, iterations: Infinity, easing: "ease-in-out" }
     );
@@ -291,12 +315,14 @@ function updateButtons(){
 }
 
 noBtn?.addEventListener("click", () => {
+  tryStartBgMusic();
   if (noBtn.disabled) return;
   noClicks += 1;
   updateButtons();
 });
 
 yesBtn?.addEventListener("click", () => {
+  tryStartBgMusic();
   showScreen("screen-schedule");
 });
 
@@ -306,12 +332,13 @@ updateButtons();
    SCHEDULE -> GIFT
 ========================= */
 $("giftBtn")?.addEventListener("click", () => {
+  tryStartBgMusic();
   showScreen("screen-gift");
-  buildBouquet(); // DO NOT CHANGE THIS (you love it)
+  buildBouquet();
 });
 
 /* =========================
-   GIFT: emoji bouquet (slightly bigger)
+   GIFT: bouquet (unchanged vibe)
 ========================= */
 const bouquet = $("bouquet");
 
@@ -340,7 +367,6 @@ function buildBouquet(){
       y = 50 + (Math.random()*44 - 22);
     }
 
-    // slightly bigger overall
     const size = 36 + Math.random()*42;
     el.style.left = `${x}%`;
     el.style.top  = `${y}%`;
@@ -370,6 +396,7 @@ $("restartBtn")?.addEventListener("click", () => {
   noBtn.style.flex  = "1 1 0%";
   yesBtn.style.transform = "";
   noBtn.style.transform = "";
+  if (qWrap) qWrap.style.transform = "";
 
   rageLine.textContent = "";
 
