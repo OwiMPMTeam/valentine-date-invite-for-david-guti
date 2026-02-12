@@ -1,4 +1,3 @@
-// ===== helpers =====
 const $ = (id) => document.getElementById(id);
 
 function showScreen(id){
@@ -6,12 +5,13 @@ function showScreen(id){
   $(id)?.classList.add("active");
 }
 
-// ===== password gate =====
+/* =========================
+   PASSWORD
+========================= */
 const pwInput = $("pwInput");
 const pwBtn = $("pwBtn");
 const pwMsg = $("pwMsg");
 const pwBg = $("pwBg");
-
 let fails = 0;
 
 function norm(s){
@@ -34,7 +34,7 @@ function validPw(s){
 }
 
 function setPwMsg(text){
-  pwMsg.textContent = text;
+  pwMsg.textContent = text || "";
 }
 
 function showGossipBehind(){
@@ -55,7 +55,6 @@ function submitPw(){
     showScreen("screen-cover");
     return;
   }
-
   fails += 1;
   if (fails === 1){
     setPwMsg("Nope 😼 try again.");
@@ -70,72 +69,61 @@ function submitPw(){
 pwBtn?.addEventListener("click", submitPw);
 pwInput?.addEventListener("keydown", (e) => { if (e.key === "Enter") submitPw(); });
 
-// ===== sparkles =====
+/* =========================
+   SPARKLES
+========================= */
 const sparkles = $("sparkles");
 
 function burstSparkles(){
   if (!sparkles) return;
-
   const symbols = ["✨","⚡️","💫","💕","🏳️‍🌈","💖","✨","⚡️"];
   const sizes = ["s1","s2","s3","s4","s5"];
 
   sparkles.innerHTML = "";
 
-  const count = 120; // MORE
+  const count = 120;
   for (let i=0; i<count; i++){
     const s = document.createElement("div");
     s.className = `spark ${sizes[Math.floor(Math.random()*sizes.length)]}`;
     s.textContent = symbols[Math.floor(Math.random()*symbols.length)];
-
     s.style.left = `${Math.random()*120 - 10}%`;
     s.style.top  = `${Math.random()*85}%`;
-
     s.style.setProperty("--dx", `${Math.random()*900 - 450}px`);
     s.style.setProperty("--dy", `${Math.random()*520 - 260}px`);
-
     s.style.animationDelay = `${Math.random()*1800}ms`;
     sparkles.appendChild(s);
   }
 
-  // persist into next screen, fade slowly
   setTimeout(() => { sparkles.innerHTML = ""; }, 11500);
 }
 
-// ===== cover screen =====
+/* =========================
+   COVER
+========================= */
 const letterBtn = $("letterBtn");
 const letterImg = $("letterImg");
 
 letterBtn?.addEventListener("click", () => {
-  if (!letterImg) return;
-
   burstSparkles();
   letterImg.src = "./assets/cover/Letter_Opening.gif";
-
-  // quick “pop”
-  letterBtn.style.transform = "translateY(-2px) scale(1.04)";
-  setTimeout(() => { letterBtn.style.transform = ""; }, 220);
-
   setTimeout(() => {
     letterImg.src = "./assets/cover/Letter_Flying.gif";
     showScreen("screen-question");
   }, 700);
 });
 
-// ===== parallax (hover-ish effect) =====
+/* Parallax (doesn't break rotations) */
 const parallaxArea = $("parallaxArea");
 const parallaxEls = parallaxArea ? Array.from(parallaxArea.querySelectorAll(".parallax")) : [];
-
 let tx=0, ty=0, cx=0, cy=0;
 
 function applyParallax(){
   parallaxEls.forEach(el => {
     const depth = Number(el.dataset.depth || "16");
+    const rot = Number(el.dataset.rot || "0");
     const dx = cx * depth;
     const dy = cy * depth;
-    const base = el.style.transform || "";
-    // NOTE: base already has rotation from CSS; we override transform here safely:
-    const rot = getComputedStyle(el).transform === "none" ? "" : "";
-    el.style.transform = `translate(${dx}px, ${dy}px)`;
+    el.style.transform = `translate(${dx}px, ${dy}px) rotate(${rot}deg)`;
   });
 }
 
@@ -145,6 +133,7 @@ function loop(){
   applyParallax();
   requestAnimationFrame(loop);
 }
+
 if (parallaxArea && parallaxEls.length){
   parallaxArea.addEventListener("mousemove", (e) => {
     const r = parallaxArea.getBoundingClientRect();
@@ -156,20 +145,12 @@ if (parallaxArea && parallaxEls.length){
 
   parallaxArea.addEventListener("mouseleave", () => { tx = 0; ty = 0; }, { passive:true });
 
-  // mobile touch parallax
-  parallaxArea.addEventListener("touchmove", (e) => {
-    if (!e.touches || !e.touches[0]) return;
-    const r = parallaxArea.getBoundingClientRect();
-    const nx = ((e.touches[0].clientX - r.left) / r.width) * 2 - 1;
-    const ny = ((e.touches[0].clientY - r.top) / r.height) * 2 - 1;
-    tx = Math.max(-1, Math.min(1, nx)) * 0.9;
-    ty = Math.max(-1, Math.min(1, ny)) * 0.9;
-  }, { passive:true });
-
   requestAnimationFrame(loop);
 }
 
-// ===== question screen logic =====
+/* =========================
+   QUESTION (YES GROWS A LOT)
+========================= */
 const yesBtn = $("yesBtn");
 const noBtn  = $("noBtn");
 const rageLine = $("rageLine");
@@ -179,14 +160,13 @@ let noClicks = 0;
 const maxClicks = 6;
 
 function updateButtons(){
-  if (!yesBtn || !noBtn) return;
+  // Significant growth
+  const yesScale = 1 + noClicks * 0.48;      // BIG growth per click
+  const noScale  = Math.max(0.45, 1 - noClicks * 0.14);
 
-  // yes grows, no shrinks — USING TRANSFORM so layout doesn't break
-  const yesScale = 1 + noClicks * 0.22;
-  const noScale  = Math.max(0.55, 1 - noClicks * 0.11);
+  // keep them close and funny
+  const nudge = Math.min(26, noClicks * 5);
 
-  // keep them close: nudge both to the right together a tiny bit
-  const nudge = Math.min(22, noClicks * 4);
   yesBtn.style.transform = `translateX(${nudge}px) scale(${yesScale})`;
   noBtn.style.transform  = `translateX(${nudge}px) scale(${noScale})`;
 
@@ -198,13 +178,18 @@ function updateButtons(){
 
   if (noClicks >= maxClicks){
     noBtn.disabled = true;
-    // keep outline color but change label
     noBtn.innerHTML = `<span class="btnStroke">Hehe. YOU WISH 🤪</span>`;
-    if (qBgImg) qBgImg.src = "./assets/question/bg_final.gif";
+    qBgImg.src = "./assets/question/bg_final.gif";
 
-    // make YES “pound”
-    yesBtn.style.animation = "pound .65s ease-in-out infinite";
-    yesBtn.style.setProperty("--poundScale", `${yesScale}`);
+    // pound YES
+    yesBtn.animate(
+      [
+        { transform: `translateX(${nudge}px) scale(${yesScale})` },
+        { transform: `translateX(${nudge}px) scale(${yesScale * 1.06})` },
+        { transform: `translateX(${nudge}px) scale(${yesScale})` },
+      ],
+      { duration: 650, iterations: Infinity, easing: "ease-in-out" }
+    );
   }
 }
 
@@ -218,46 +203,80 @@ yesBtn?.addEventListener("click", () => {
   showScreen("screen-schedule");
 });
 
-// pound animation injected via JS needs keyframes:
-const style = document.createElement("style");
-style.textContent = `
-@keyframes pound{
-  0%,100%{ transform: translateX(0px) scale(var(--poundScale, 1)); }
-  50%{ transform: translateX(0px) scale(calc(var(--poundScale, 1) * 1.06)); }
-}`;
-document.head.appendChild(style);
-
-// init
 updateButtons();
 
-// ===== schedule -> gift =====
+/* =========================
+   SCHEDULE -> GIFT
+========================= */
 $("giftBtn")?.addEventListener("click", () => {
   showScreen("screen-gift");
+  buildBouquet(); // emoji bouquet animation
 });
 
-// ===== restart =====
+/* =========================
+   GIFT: BOUQUET OF ROSES (emoji)
+========================= */
+const bouquet = $("bouquet");
+
+function buildBouquet(){
+  if (!bouquet) return;
+  bouquet.innerHTML = "";
+
+  // Bouquet coordinates (percent positions) shaped like a bouquet
+  const coords = [
+    [50,18],[44,20],[56,20],[39,24],[61,24],[33,30],[67,30],
+    [28,38],[72,38],[24,48],[76,48],[30,56],[70,56],
+    [36,62],[64,62],[42,66],[58,66],[48,68],[52,68],
+    [46,72],[54,72],[50,75],[45,78],[55,78],[50,82]
+  ];
+
+  // Add extra roses around for richness
+  const extra = 18;
+  for (let i=0; i<coords.length + extra; i++){
+    const el = document.createElement("div");
+    el.className = "rose";
+    el.textContent = "🌹";
+
+    let x, y;
+    if (i < coords.length){
+      [x,y] = coords[i];
+    } else {
+      // random around bouquet center
+      x = 50 + (Math.random()*28 - 14);
+      y = 50 + (Math.random()*40 - 20);
+    }
+
+    const size = 28 + Math.random()*34; // size variation
+    el.style.left = `${x}%`;
+    el.style.top  = `${y}%`;
+    el.style.fontSize = `${size}px`;
+    el.style.animationDelay = `${i * 40}ms`;
+
+    bouquet.appendChild(el);
+  }
+}
+
+/* =========================
+   RESTART
+========================= */
 $("restartBtn")?.addEventListener("click", () => {
-  // reset everything
   fails = 0;
   noClicks = 0;
+
   if (pwInput) pwInput.value = "";
   setPwMsg("");
   if (pwBg) pwBg.innerHTML = "";
   if (sparkles) sparkles.innerHTML = "";
 
-  if (qBgImg) qBgImg.src = "./assets/question/bg.gif";
-  if (noBtn){
-    noBtn.disabled = false;
-    noBtn.innerHTML = `<span class="btnStroke">Hell nah, Keysha!</span>`;
-    noBtn.style.transform = "";
-  }
-  if (yesBtn){
-    yesBtn.style.animation = "";
-    yesBtn.style.transform = "";
-    yesBtn.style.removeProperty("--poundScale");
-  }
-  if (rageLine) rageLine.textContent = "";
+  qBgImg.src = "./assets/question/bg.gif";
+  noBtn.disabled = false;
+  noBtn.innerHTML = `<span class="btnStroke">Hell nah, Keysha!</span>`;
+  yesBtn.style.transform = "";
+  noBtn.style.transform = "";
+  rageLine.textContent = "";
+
   if (letterImg) letterImg.src = "./assets/cover/Letter_Flying.gif";
+  if (bouquet) bouquet.innerHTML = "";
 
   showScreen("screen-password");
 });
