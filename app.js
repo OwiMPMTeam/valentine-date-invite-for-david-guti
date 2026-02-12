@@ -128,7 +128,7 @@ function handlePasswordSubmit() {
   }
 
   if (pwFails === 2) {
-    showPwMessage('Hint: “Gossip Girls: asked him for the weather”');
+    showPwMessage('Hint: “Mean Girls: She asked him for the weather on that day!”');
     spawnGossipGifRandomly();
     return;
   }
