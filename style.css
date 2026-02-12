@@ -156,79 +156,83 @@ body{
 .hidden{ display:none; }
 
 /* ---------------------------
-   Scribble Buttons (your vibe)
+   Scribble Buttons using YOUR SVG
 ---------------------------- */
 .scribble-btn{
   position:relative;
   background: transparent;
   color: var(--ink);
-  border: 3px solid rgba(0,0,0,0.75);
-  border-radius: 26px;
-  padding: 14px 18px;
+  border: none;                 /* border is SVG now */
+  border-radius: 22px;
+  padding: 16px 22px;
   font-size: 22px;
   cursor:pointer;
   font-family: "Gluten", system-ui;
   letter-spacing: 0.2px;
-  box-shadow: none;
-  transition: transform .12s ease, opacity .12s ease, filter .12s ease;
   user-select:none;
+  transform: translateZ(0);
 }
 
-.scribble-btn::before{
-  content:"";
+.scribble-svg{
+  isolation: isolate;
+}
+
+.scribble-svg .btnText{
+  position:relative;
+  z-index: 2;
+}
+
+.scribble-svg .btnScribble{
   position:absolute;
-  inset:-7px -8px -8px -7px;
-  border: 3px solid rgba(0,0,0,0.30);
-  border-radius: 30px;
-  transform: rotate(-0.8deg);
+  inset:-14px;                  /* looseness of border */
+  width: calc(100% + 28px);
+  height: calc(100% + 28px);
+  z-index: 1;
   pointer-events:none;
-  animation: borderJitter 1.4s steps(2,end) infinite;
+  overflow: visible;
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,0.10));
+  animation: btnScribbleJitter 0.65s steps(2,end) infinite;
+  transform-origin: center;
 }
 
-.scribble-btn::after{
-  content:"";
-  position:absolute;
-  inset: 0;
-  border-radius: 26px;
-  background: rgba(255,255,255,0.22);
-  opacity:0;
-  transition: opacity .12s ease;
-  pointer-events:none;
+/* Make sure lines look like ink */
+.scribble-svg .btnScribble *{
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
 }
 
-@keyframes borderJitter{
-  0%   { transform: rotate(-0.9deg) translate(0,0); }
-  50%  { transform: rotate(0.8deg) translate(0.6px,-0.4px); }
-  100% { transform: rotate(-0.4deg) translate(-0.3px,0.4px); }
+@keyframes btnScribbleJitter{
+  0%   { transform: rotate(-0.35deg) translate(0px, 0px); }
+  50%  { transform: rotate(0.45deg) translate(0.8px, -0.4px); }
+  100% { transform: rotate(-0.15deg) translate(-0.4px, 0.6px); }
 }
 
-.scribble-btn:hover{
-  transform: translateY(-1px) rotate(0.2deg);
-  filter: contrast(1.02);
+/* Hover: quicker alive */
+.scribble-btn:hover .btnScribble{
+  animation-duration: 0.45s;
 }
-.scribble-btn:hover::after{ opacity: 1; }
+
+/* Hover: optional “draw” pop */
+.scribble-btn:hover .btnScribble *{
+  stroke-dasharray: 2600;
+  stroke-dashoffset: 2600;
+  animation: drawScribble 0.9s steps(2,end) forwards;
+}
+@keyframes drawScribble{
+  to { stroke-dashoffset: 0; }
+}
 
 .scribble-btn:active{
-  transform: translateY(0px) rotate(-0.2deg) scale(0.99);
+  transform: scale(0.985);
 }
 
-/* Variants */
-.scribble-btn.primary{
-  border-color: rgba(255,90,155,0.88);
-}
-.scribble-btn.primary::before{
-  border-color: rgba(132,115,255,0.34);
-}
-
-.scribble-btn.no{
-  opacity: 0.9;
-  border-color: rgba(0,0,0,0.55);
-}
-.scribble-btn.yes{
-  border-color: rgba(0,0,0,0.85);
-}
-.scribble-btn.gift{
-  border-color: rgba(255,90,155,0.65);
+.scribble-btn:disabled{
+  opacity: 0.25;
+  cursor: not-allowed;
+  filter: grayscale(1);
 }
 
 .full{
@@ -238,15 +242,11 @@ body{
   text-decoration:none;
 }
 
-/* Disabled state (for “Hell nah” after 6 clicks) */
-.scribble-btn:disabled{
-  opacity: 0.28;
-  cursor: not-allowed;
-  filter: grayscale(1);
-}
-.scribble-btn:disabled::before{
-  animation: none;
-}
+/* Button color variants (ink color) */
+.scribble-btn.primary{ color: rgba(255,90,155,0.95); }
+.scribble-btn.no{ color: rgba(0,0,0,0.65); }
+.scribble-btn.yes{ color: rgba(0,0,0,0.88); }
+.scribble-btn.gift{ color: rgba(255,90,155,0.75); }
 
 /* ---------------------------
    Cover screen
@@ -340,7 +340,7 @@ body{
   border: 10px solid rgba(255,255,255,0.55);
 }
 
-/* Letter “opening” state */
+/* Letter “opening” state (app.js toggles .opening on letterStack) */
 .opening .letterImg{
   transform: scale(1.08) rotate(-2deg);
 }
