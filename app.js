@@ -229,5 +229,5 @@ restartBtn?.addEventListener("click", ()=>{
   showOnly("screen-password");
 });
 
-// Make sure question starts in clean state
+// Make sure question strts in clean state
 updateButtons();
