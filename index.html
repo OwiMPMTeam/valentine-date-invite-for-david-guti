@@ -22,7 +22,7 @@
       <div class="smallNote">(Hint: it’s our little phrase)</div>
 
       <div class="row">
-        <input id="pwInput" class="input" type="text" placeholder='Type: "Our Love Day"' autocomplete="off" />
+        <input id="pwInput" class="input" type="text" placeholder="••• •••" autocomplete="off" />
         <button id="pwBtn" class="btn lined thick primary">Unlock</button>
       </div>
 
@@ -30,25 +30,31 @@
     </div>
   </section>
 
-  <!-- Cover -->
+  <!-- COVER / INVITATION -->
   <section class="screen" id="screen-cover">
-    <div class="content">
-      <div class="topTag scribbleTitle">Valentine’s Day Invitation</div>
+    <div class="content coverContent">
+      <div class="coverHeadlineWrap">
+        <div class="coverHeadline scribbleTitle">
+          Open Your <span class="pinkWord">Valentine’s</span> Card 💗
+        </div>
+      </div>
 
-      <div class="coverGrid" id="parallaxArea">
-        <div class="letterArea">
-          <div class="letterStack" id="letterStack" role="button" tabindex="0" aria-label="Open letter">
-            <img class="letterImg" id="letterImg" src="./assets/cover/letter.png" alt="Letter" />
-            <div class="letterHint">Tap to open 💘</div>
-          </div>
+      <div class="coverStage" id="parallaxArea">
+
+        <!-- BACK decor (behind the letter) -->
+        <img class="decor parallax d1" data-depth="10" src="./assets/cover/gif1.gif" alt="Decor gif 1"/>
+        <img class="decor parallax d2" data-depth="14" src="./assets/cover/gif2.gif" alt="Decor gif 2"/>
+        <img class="decor parallax d3" data-depth="12" src="./assets/cover/gif3.gif" alt="Decor gif 3"/>
+        <img class="usPhoto parallax u1" data-depth="8" src="./assets/cover/us.jpg" alt="Us photo"/>
+
+        <!-- CENTER letter -->
+        <div class="letterStack" id="letterStack" role="button" tabindex="0" aria-label="Open letter">
+          <img class="letterGif" id="letterGif" src="./assets/cover/Letter_Flying.gif" alt="Letter Flying" />
+          <div class="letterHint">Tap to open 💘</div>
         </div>
 
-        <div class="decorArea">
-          <img class="decor parallax" data-depth="8" src="./assets/cover/gif1.gif" alt="Decor gif 1"/>
-          <img class="decor parallax" data-depth="12" src="./assets/cover/gif2.gif" alt="Decor gif 2"/>
-          <img class="decor parallax" data-depth="10" src="./assets/cover/gif3.gif" alt="Decor gif 3"/>
-          <img class="usPhoto parallax" data-depth="6" src="./assets/cover/us.jpg" alt="Us photo"/>
-        </div>
+        <!-- Little sparkle overlay (optional, used on tap) -->
+        <div class="sparkles" id="sparkles"></div>
       </div>
     </div>
   </section>
