@@ -88,6 +88,28 @@ body{
   50%    { transform: rotate(0.8deg) translateY(-2px); }
 }
 
+/* White stroke for text (works everywhere) */
+.strokeText{
+  text-shadow:
+    2px 0 0 #fff,
+   -2px 0 0 #fff,
+    0 2px 0 #fff,
+    0 -2px 0 #fff,
+    1.5px 1.5px 0 #fff,
+   -1.5px 1.5px 0 #fff,
+    1.5px -1.5px 0 #fff,
+   -1.5px -1.5px 0 #fff,
+    0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* Force headline on top and avoid any weird blending */
+.topLayer{
+  position: relative;
+  z-index: 9999;
+  isolation: isolate;
+  mix-blend-mode: normal !important;
+}
+
 /* Password */
 .row{ display:flex; gap:10px; margin-top:14px; flex-wrap:wrap; align-items:center; }
 .input{
@@ -102,23 +124,7 @@ body{
 .error{ margin-top:10px; color:#b8002a; font-size:18px; }
 .hidden{ display:none; }
 
-/* Gossip gif */
-.gossipGif{
-  position:absolute;
-  width: min(780px, 160vw);
-  height:auto;
-  z-index:-1;
-  opacity:0.22;
-  pointer-events:none;
-  animation: gifFloatBg 3.2s ease-in-out infinite;
-  filter: saturate(1.05) contrast(1.02);
-}
-@keyframes gifFloatBg{
-  0%,100% { transform: translate(-50%, -50%) rotate(-1.2deg) scale(1); }
-  50%     { transform: translate(-50%, -52%) rotate(1.4deg) scale(1.03); }
-}
-
-/* Buttons */
+/* Buttons (Lined Thick + distortion) */
 .btn{
   align-self:center;
   background:transparent;
@@ -176,7 +182,6 @@ body{
 .btn:active{ transform: scale(0.97); }
 .btn:disabled{ opacity:0.28; cursor:not-allowed; filter:grayscale(1); }
 .btn:disabled::before, .btn:disabled::after{ opacity:0.12; animation:none; }
-
 .btn.primary{ color: var(--pink); }
 .btn.no{ color: rgba(0,0,0,0.65); }
 .btn.yes{ color: rgba(0,0,0,0.88); }
@@ -184,14 +189,23 @@ body{
 .full{ width:100%; display:inline-block; text-align:center; text-decoration:none; }
 
 /* COVER */
-.coverHeadlineWrap{ display:flex; justify-content:center; margin-bottom:10px; }
-.coverHeadline{ font-size: clamp(26px, 3.4vw, 44px); text-align:center; }
+.coverHeadlineWrap{
+  display:flex;
+  justify-content:center;
+  margin-bottom:10px;
+  position: relative;
+  z-index: 9999;
+}
+.coverHeadline{
+  font-size: clamp(26px, 3.4vw, 44px);
+  text-align:center;
+}
 .pinkWord{ color: var(--pink); }
 
 .coverStage{
   position:relative;
   width: min(1100px, 94vw);
-  height: min(660px, 74vh);
+  height: min(680px, 76vh);
   margin: 0 auto;
   display:flex;
   align-items:center;
@@ -199,7 +213,7 @@ body{
   overflow: visible;
 }
 
-/* Letter (best-possible fake white reduction) */
+/* Letter with alpha outline (white stroke via multiple drop-shadows) */
 .letterStack{
   position:relative;
   z-index: 3;
@@ -214,12 +228,18 @@ body{
 .letterGif{
   width: min(560px, 92vw);
   max-width: 560px;
-  /* Best effort "remove white" vibe */
-  mix-blend-mode: multiply;
-  filter: contrast(1.08) saturate(1.08);
   transform: translateZ(0);
-  /* keep edges nice */
-  image-rendering: auto;
+  /* Alpha stroke effect (applies ONLY to non-transparent pixels) */
+  filter:
+    drop-shadow( 2px 0 0 #fff)
+    drop-shadow(-2px 0 0 #fff)
+    drop-shadow( 0 2px 0 #fff)
+    drop-shadow( 0 -2px 0 #fff)
+    drop-shadow( 1.5px 1.5px 0 #fff)
+    drop-shadow(-1.5px 1.5px 0 #fff)
+    drop-shadow( 1.5px -1.5px 0 #fff)
+    drop-shadow(-1.5px -1.5px 0 #fff)
+    drop-shadow(0 18px 35px rgba(0,0,0,0.12));
 }
 .letterHint{
   position:absolute;
@@ -227,11 +247,11 @@ body{
   left: 50%;
   transform: translateX(-50%);
   font-size: 20px;
-  opacity: 0.92;
+  opacity: 0.96;
   z-index: 4;
 }
 
-/* Letter zoom */
+/* Zoom letter */
 .letterStack.zooming .letterGif{
   animation: zoomPop 0.72s cubic-bezier(.1,.9,.2,1) forwards;
 }
@@ -250,7 +270,7 @@ body{
   100% { transform: translate3d(var(--px,0px), var(--py,0px), 0) scale(1.16) rotate(calc(var(--r,0deg) * 0.98)); opacity: .98; }
 }
 
-/* Background assets (more spread + less overlap) */
+/* Background assets */
 .decor,
 .usPhoto{
   position:absolute;
@@ -262,36 +282,34 @@ body{
   will-change: transform;
   opacity: 0.92;
 }
-
-/* slightly smaller */
 .decor{
-  width: 400px;
-  height: 400px;
+  width: 390px;
+  height: 390px;
   object-fit: cover;
   border-radius: 38px;
 }
 
-/* US PHOTO: sharp corners + soft shadow (polaroid feel) */
+/* us.jpg moved more left + polaroid feel */
 .usPhoto{
   width: 420px;
   height: 520px;
   object-fit: cover;
-  border-radius: 0px; /* sharp */
+  border-radius: 0px;
   box-shadow: 0 22px 48px rgba(0,0,0,0.14);
-  opacity: 0.96;
+  opacity: 0.98;
 }
 
-/* pushed outward */
-.d1{ left: -18%; top: -4%;  transform: rotate(-7deg); --r:-7deg; }
+/* Spread + us more left */
+.d1{ left: -20%; top: -6%;  transform: rotate(-7deg); --r:-7deg; }
 .d2{ right: -22%; bottom: -14%; transform: rotate(8deg);  --r:8deg; }
-.d3{ right: 18%; top: -22%; transform: rotate(-5deg); --r:-5deg; }
-.u1{ left: 18%; bottom: -22%; transform: rotate(4deg);  --r:4deg; }
+.d3{ right: 22%; top: -22%; transform: rotate(-5deg); --r:-5deg; }
+.u1{ left: 6%; bottom: -22%; transform: rotate(4deg);  --r:4deg; }
 
-/* Sparkles overlay: persist & fall */
+/* Sparkles overlay (more time on screen) */
 .sparkles{
-  position:absolute;
+  position:fixed; /* so they can remain visible during screen swap */
   inset:0;
-  z-index: 999; /* above everything */
+  z-index: 9998;
   pointer-events:none;
   overflow: visible;
 }
@@ -302,32 +320,38 @@ body{
   opacity: 0;
   filter: drop-shadow(0 12px 18px rgba(0,0,0,0.12));
   will-change: transform, opacity;
-  animation: sparkleFall 1800ms ease-out forwards;
+  animation: sparkleFall 4200ms ease-out forwards;
 }
-.spark.s1{ font-size: 22px; }
-.spark.s2{ font-size: 34px; }
-.spark.s3{ font-size: 46px; }
-.spark.s4{ font-size: 62px; }
+
+/* wider size variation */
+.spark.s1{ font-size: 18px; }
+.spark.s2{ font-size: 28px; }
+.spark.s3{ font-size: 44px; }
+.spark.s4{ font-size: 66px; }
+.spark.s5{ font-size: 92px; }
 
 @keyframes sparkleFall{
   0%{
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.25) rotate(-14deg);
+    transform: translate(-50%, -50%) scale(0.2) rotate(-14deg);
   }
-  16%{
+  10%{
     opacity: 1;
-    transform: translate(-50%, -50%) scale(1.10) rotate(12deg);
+    transform: translate(-50%, -50%) scale(1.15) rotate(12deg);
+  }
+  70%{
+    opacity: 0.95;
   }
   100%{
     opacity: 0;
     transform:
-      translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 240px))
+      translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 520px))
       scale(0.95)
-      rotate(34deg);
+      rotate(42deg);
   }
 }
 
-/* Question */
+/* Question background */
 .questionBg{
   position:fixed;
   inset:0;
