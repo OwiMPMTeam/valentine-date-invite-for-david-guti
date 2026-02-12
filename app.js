@@ -345,3 +345,37 @@ function resetAll() {
 }
 
 if (restartBtn) restartBtn.addEventListener("click", resetAll);
+
+// sparkles burst ✨⚡️💫💕
+const sparkles = document.getElementById("sparkles");
+if (sparkles) {
+  const symbols = ["✨","⚡️","💫","💕","✨","⚡️"];
+  const sizes = ["s1","s2","s3","s4"];
+
+  sparkles.innerHTML = "";
+  for (let i = 0; i < 14; i++) {
+    const s = document.createElement("div");
+    s.className = `spark ${sizes[Math.floor(Math.random() * sizes.length)]}`;
+    s.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+
+    // spawn around the center-ish area
+    const cx = 50 + (Math.random() * 26 - 13);
+    const cy = 50 + (Math.random() * 26 - 13);
+    s.style.left = `${cx}%`;
+    s.style.top = `${cy}%`;
+
+    // drift direction
+    const dx = (Math.random() * 180 - 90).toFixed(0) + "px";
+    const dy = (Math.random() * 160 - 110).toFixed(0) + "px";
+    s.style.setProperty("--dx", dx);
+    s.style.setProperty("--dy", dy);
+
+    // stagger a bit (makes it feel alive)
+    s.style.animationDelay = `${Math.random() * 140}ms`;
+
+    sparkles.appendChild(s);
+  }
+
+  // cleanup
+  setTimeout(() => { sparkles.innerHTML = ""; }, 900);
+}
