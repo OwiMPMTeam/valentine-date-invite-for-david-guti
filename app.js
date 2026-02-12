@@ -102,35 +102,22 @@ function handlePasswordSubmit() {
 
   pwFails += 1;
 
-  if (pwFails === 1) {
-    showPwMessage("Nope 😼 try again.", "error");
-    return;
-  }
-
-  if (pwFails === 2) {
-    showPwMessage('Hint: “Gossip Girls: asked him for the weather”', "error");
-    spawnGossipGifRandomly();
-    return;
-  }
-
+  if (pwFails === 1) return showPwMessage("Nope 😼 try again.", "error");
+  if (pwFails === 2) { showPwMessage('Hint: “Gossip Girls: asked him for the weather”', "error"); return spawnGossipGifRandomly(); }
   showPwMessage("It’s October 3 🙄 girl… come on", "soft");
 }
 
 if (pwBtn) pwBtn.addEventListener("click", handlePasswordSubmit);
-if (pwInput) {
-  pwInput.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") handlePasswordSubmit();
-  });
-}
+if (pwInput) pwInput.addEventListener("keydown", (e) => { if (e.key === "Enter") handlePasswordSubmit(); });
 
 // ============================================
-// COVER: Parallax (stronger)
+// COVER: Parallax (strong)
 // ============================================
 
 const parallaxArea = $("parallaxArea");
 let parallaxItems = [];
 
-let targetX = 0, targetY = 0; // -1..1
+let targetX = 0, targetY = 0;
 let curX = 0, curY = 0;
 
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
@@ -155,9 +142,7 @@ function captureInitialRotations() {
 }
 
 function applyParallax() {
-  // stronger than before:
-  const strength = 1.85;
-
+  const strength = 1.95;
   parallaxItems.forEach((el) => {
     const depth = Number(el.dataset.depth || "20");
     const dx = curX * depth * strength;
@@ -186,24 +171,21 @@ function loop() {
 
   requestAnimationFrame(loop);
 
-  parallaxArea.addEventListener("mousemove", (e) => {
-    setTargetFromClient(e.clientX, e.clientY);
-  }, { passive: true });
+  parallaxArea.addEventListener("mousemove", (e) => setTargetFromClient(e.clientX, e.clientY), { passive: true });
 
   parallaxArea.addEventListener("touchmove", (e) => {
     if (!e.touches || !e.touches[0]) return;
     setTargetFromClient(e.touches[0].clientX, e.touches[0].clientY);
   }, { passive: true });
 
-  // gentle drift when idle
   setInterval(() => {
-    targetX = clamp(targetX + (Math.random() * 0.22 - 0.11), -0.75, 0.75);
-    targetY = clamp(targetY + (Math.random() * 0.22 - 0.11), -0.75, 0.75);
+    targetX = clamp(targetX + (Math.random() * 0.22 - 0.11), -0.8, 0.8);
+    targetY = clamp(targetY + (Math.random() * 0.22 - 0.11), -0.8, 0.8);
   }, 1800);
 })();
 
 // ============================================
-// COVER: Sparkles (bigger, more, longer, fall, persist into next screen)
+// SPARKLES (MORE + LONGER + FALL + persist across next screen)
 // ============================================
 
 const sparkles = $("sparkles");
@@ -211,40 +193,39 @@ const sparkles = $("sparkles");
 function burstSparkles() {
   if (!sparkles) return;
 
-  const symbols = ["✨","⚡️","💫","💕","💞","🏳️‍🌈","✨","⚡️","💫","🏳️‍🌈"];
-  const sizes = ["s1","s2","s3","s4"];
+  const symbols = ["✨","⚡️","💫","💕","💞","🏳️‍🌈","✨","⚡️","💫","🏳️‍🌈","✨","💖"];
+  const sizes = ["s1","s2","s3","s4","s5"];
 
-  // DO NOT clear immediately — we let them live through transition
+  // don't clear immediately; let them live
   sparkles.innerHTML = "";
 
-  // more sparkles
-  const count = 34;
+  const count = 70; // MORE!
 
   for (let i = 0; i < count; i++) {
     const s = document.createElement("div");
     s.className = `spark ${sizes[Math.floor(Math.random() * sizes.length)]}`;
     s.textContent = symbols[Math.floor(Math.random() * symbols.length)];
 
-    // wider spread across screen
-    const cx = 50 + (Math.random() * 90 - 45);  // much wider
-    const cy = 46 + (Math.random() * 70 - 35);
+    // spawn across a wide field
+    const cx = Math.random() * 110 - 5; // -5%..105%
+    const cy = Math.random() * 70 + 5;  // 5%..75%
     s.style.left = `${cx}%`;
     s.style.top = `${cy}%`;
 
-    // drift direction + fall
-    const dx = (Math.random() * 420 - 210).toFixed(0) + "px";
-    const dy = (Math.random() * 260 - 140).toFixed(0) + "px";
+    // drift + fall
+    const dx = (Math.random() * 520 - 260).toFixed(0) + "px";
+    const dy = (Math.random() * 300 - 140).toFixed(0) + "px";
     s.style.setProperty("--dx", dx);
     s.style.setProperty("--dy", dy);
 
-    // stagger so it feels like fireworks
-    s.style.animationDelay = `${Math.random() * 240}ms`;
+    // stagger
+    s.style.animationDelay = `${Math.random() * 900}ms`;
 
     sparkles.appendChild(s);
   }
 
-  // keep sparkles visible even after next screen appears
-  setTimeout(() => { sparkles.innerHTML = ""; }, 1900);
+  // clear after they finish (matches CSS 4200ms + delay up to 900ms)
+  setTimeout(() => { sparkles.innerHTML = ""; }, 5600);
 }
 
 // ============================================
@@ -257,23 +238,16 @@ const letterGif = $("letterGif");
 function goToQuestionFromCover() {
   if (!letterStack || !letterGif) return;
 
-  // swap to opening gif
   letterGif.src = "./assets/cover/Letter_Opening.gif";
-
-  // sparkles
   burstSparkles();
 
-  // zoom animations: letter + background
   letterStack.classList.add("zooming");
   if (parallaxArea) parallaxArea.classList.add("zooming");
 
   setTimeout(() => {
-    // do NOT clear sparkles yet (they stay a bit)
-    // reset for replay
     letterGif.src = "./assets/cover/Letter_Flying.gif";
     letterStack.classList.remove("zooming");
     if (parallaxArea) parallaxArea.classList.remove("zooming");
-
     showScreen("question");
   }, 720);
 }
@@ -284,24 +258,6 @@ if (letterStack) {
     if (e.key === "Enter" || e.key === " ") goToQuestionFromCover();
   });
 }
-
-// ============================================
-// GIF2 loop hack (only if it was exported as play-once)
-// This reassigns src every few seconds to "replay" it.
-// If your gif is truly 1-loop, this makes it feel looping.
-// ============================================
-
-(function forceGif2Loop(){
-  const gif2 = $("gif2");
-  if (!gif2) return;
-
-  const baseSrc = gif2.getAttribute("src") || "./assets/cover/gif2.gif";
-
-  setInterval(() => {
-    // cache-bust to force replay
-    gif2.src = `${baseSrc}?v=${Date.now()}`;
-  }, 5200); // adjust if the gif is longer/shorter
-})();
 
 // ============================================
 // QUESTION SCREEN
@@ -329,18 +285,8 @@ function updateNoYesSizes() {
   }
 }
 
-if (noBtn) {
-  noBtn.addEventListener("click", () => {
-    noClicks += 1;
-    updateNoYesSizes();
-  });
-}
-
-if (yesBtn) {
-  yesBtn.addEventListener("click", () => {
-    showScreen("schedule");
-  });
-}
+if (noBtn) noBtn.addEventListener("click", () => { noClicks += 1; updateNoYesSizes(); });
+if (yesBtn) yesBtn.addEventListener("click", () => showScreen("schedule"));
 
 // ============================================
 // SCHEDULE -> GIFT
