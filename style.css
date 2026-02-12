@@ -148,8 +148,7 @@ body{
 .hidden{ display:none; }
 
 /* =========================================================
-   BUTTONS — EXTRA distorted / uneven / hand-drawn + animated
-   (no SVG files; stronger displacement + multi-stroke chaos)
+   BUTTONS — Lined Thick + your displacement chaos (scale 11)
 ========================================================= */
 
 .btn{
@@ -162,7 +161,6 @@ body{
   background: transparent;
   color: var(--ink);
 
-  border: none;
   padding: 16px 22px;
   font-size: 22px;
   cursor: pointer;
@@ -171,78 +169,79 @@ body{
 
   user-select:none;
   text-decoration:none;
-  isolation:isolate;
+  border: none;
+  outline: none;
+
   transform: translateZ(0);
+  isolation: isolate;
 }
 
-/* 3 scribbly strokes */
-.btn.scribble::before,
-.btn.scribble::after,
-.btn.scribble .ink{
+/* Base “Lined Thick” feel (imperfect pill) */
+.btn.lined.thick{
+  border: solid 7px currentColor;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+  box-shadow: 20px 38px 34px -26px hsla(0,0%,0%,.20);
+  transition: box-shadow .25s ease, transform .25s ease;
+}
+
+/* Extra hand-drawn passes: 2 ghost outlines with heavy distortion */
+.btn.lined.thick::before,
+.btn.lined.thick::after{
   content:"";
   position:absolute;
-  inset:-10px -12px -12px -10px;
-  border: 3px solid currentColor;
-  border-radius: 26px;
+  inset:-9px -11px -11px -9px;
+  border: solid 7px currentColor;
+  border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
   pointer-events:none;
   z-index:-1;
 
-  /* stronger uneven edges (bigger displacement) */
+  /* HEAVY displacement = 11 */
   filter:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' seed='8' stitchTiles='stitch'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='7.2'/%3E%3C/filter%3E%3C/svg%3E%23n");
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' seed='9' stitchTiles='stitch'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='11'/%3E%3C/filter%3E%3C/svg%3E%23n");
+
+  animation: outlineJitter 0.75s steps(2,end) infinite;
+  opacity: 0.38;
 }
 
-/* second pass */
-.btn.scribble::after{
-  inset:-14px -16px -16px -14px;
-  opacity:0.42;
-  transform: rotate(-1.6deg) translate(-0.8px, 0.5px);
-  border-width: 2.6px;
+/* first ghost pass */
+.btn.lined.thick::before{
+  inset:-12px -15px -15px -12px;
+  opacity:0.32;
+  transform: rotate(-1.25deg) translate(-0.6px, 0.5px);
+}
+
+/* second ghost pass, slightly different noise seed */
+.btn.lined.thick::after{
+  inset:-16px -18px -18px -16px;
+  opacity:0.20;
+  transform: rotate(1.05deg) translate(0.8px, -0.4px);
   filter:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='8.8'/%3E%3C/filter%3E%3C/svg%3E%23n2");
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='3' seed='3' stitchTiles='stitch'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='11'/%3E%3C/filter%3E%3C/svg%3E%23n2");
 }
 
-/* third ghost stroke (we create an extra element via background trick) */
-.btn.scribble{
-  --wig: 1;
-  animation: btnChaos 0.9s steps(2,end) infinite;
+/* Micro “framey” jitter of the whole button */
+.btn.lined.thick{
+  animation: btnWiggle 0.95s steps(2,end) infinite;
 }
 
-/* This pseudo element is the 3rd stroke */
-.btn.scribble{
-  /* create a real element via box-shadow style layering */
-}
-.btn.scribble::before{
-  opacity:0.92;
-}
-.btn.scribble::before{
-  box-shadow:
-    0 0 0 0 rgba(0,0,0,0);
+@keyframes btnWiggle{
+  0%   { transform: rotate(-0.25deg) translate(0,0) scale(1); }
+  50%  { transform: rotate(0.45deg) translate(0.9px,-0.5px) scale(1.01); }
+  100% { transform: rotate(-0.10deg) translate(-0.6px,0.7px) scale(1); }
 }
 
-/* extra inner ink wobble via background (subtle) */
-.btn.scribble{
-  background:
-    linear-gradient(transparent, transparent) padding-box;
+@keyframes outlineJitter{
+  0%   { transform: rotate(-0.8deg) translate(0,0); }
+  50%  { transform: rotate(0.9deg) translate(0.8px,-0.5px); }
+  100% { transform: rotate(-0.2deg) translate(-0.6px,0.7px); }
 }
 
-@keyframes btnChaos{
-  0%   { transform: rotate(-0.35deg) translate(0px,0px) scale(1); }
-  50%  { transform: rotate(0.55deg) translate(0.9px,-0.6px) scale(1.01); }
-  100% { transform: rotate(-0.15deg) translate(-0.6px,0.8px) scale(1); }
+.btn.lined.thick:hover{
+  box-shadow: 2px 8px 4px -6px hsla(0,0%,0%,.30);
+  animation-duration: 0.65s;
 }
 
-/* Hover: more alive + stronger distortion */
-.btn.scribble:hover{
-  animation-duration: 0.55s;
-}
-.btn.scribble:hover::before{
-  filter:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n3'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.05' numOctaves='3' seed='11' stitchTiles='stitch'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='9.2'/%3E%3C/filter%3E%3C/svg%3E%23n3");
-}
-
-/* Press */
-.btn.scribble:active{
+.btn.lined.thick:active{
   transform: scale(0.985);
 }
 
@@ -254,11 +253,11 @@ body{
 }
 .btn:disabled::before,
 .btn:disabled::after{
-  opacity: 0.18;
+  opacity: 0.12;
   animation: none;
 }
 
-/* Variants */
+/* Color variants */
 .btn.primary{ color: rgba(255,90,155,0.95); }
 .btn.no{ color: rgba(0,0,0,0.65); }
 .btn.yes{ color: rgba(0,0,0,0.88); }
@@ -269,7 +268,6 @@ body{
   display:inline-flex;
   text-align:center;
 }
-
 
 /* ---------------------------
    Cover screen
