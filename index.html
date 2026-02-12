@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Valentine Date Invite 💘</title>
 
-  <!-- Gluten font -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Gluten:wght@400;600;800&display=swap" rel="stylesheet">
@@ -39,17 +38,17 @@
         </div>
       </div>
 
-      <div class="coverStage" id="parallaxArea" aria-label="Invitation stage">
+      <div class="coverStage" id="parallaxArea">
 
-        <!-- BACK decor (behind the letter) -->
-        <img class="decor parallax d1" data-depth="22" src="./assets/cover/gif1.gif" alt="Decor gif 1"/>
-        <img class="decor parallax d2" data-depth="28" src="./assets/cover/gif2.gif" alt="Decor gif 2"/>
-        <img class="decor parallax d3" data-depth="24" src="./assets/cover/gif3.gif" alt="Decor gif 3"/>
-        <img class="usPhoto parallax u1" data-depth="18" src="./assets/cover/us.jpg" alt="Us photo"/>
+        <!-- BACK decor -->
+        <img id="gif1" class="decor parallax d1" data-depth="24" src="./assets/cover/gif1.gif" alt="Decor gif 1"/>
+        <img id="gif2" class="decor parallax d2" data-depth="30" src="./assets/cover/gif2.gif" alt="Decor gif 2"/>
+        <img id="gif3" class="decor parallax d3" data-depth="26" src="./assets/cover/gif3.gif" alt="Decor gif 3"/>
+        <img class="usPhoto parallax u1" data-depth="20" src="./assets/cover/us.jpg" alt="Us photo"/>
 
         <!-- CENTER letter -->
         <div class="letterStack" id="letterStack" role="button" tabindex="0" aria-label="Open card">
-          <img class="letterGif blend" id="letterGif" src="./assets/cover/Letter_Flying.gif" alt="Letter Flying" />
+          <img class="letterGif" id="letterGif" src="./assets/cover/Letter_Flying.gif" alt="Letter Flying" />
           <div class="letterHint">Tap to open 💘</div>
         </div>
 
@@ -88,17 +87,13 @@
       <div class="scheduleGrid">
         <div class="scheduleCard">
           <div class="scheduleName">💘 Long Distance Valentine Date</div>
-          <div class="scheduleDesc" id="scheduleDesc">
-            (You’ll replace this with the real plan.)
-          </div>
+          <div class="scheduleDesc" id="scheduleDesc">(You’ll replace this with the real plan.)</div>
 
           <a class="btn lined thick primary full" href="./calendar/valentine-date.ics" download>
             Add to Apple Calendar 🍎
           </a>
 
-          <div class="tiny">
-            If your phone asks what to open it with, choose Calendar.
-          </div>
+          <div class="tiny">If your phone asks what to open it with, choose Calendar.</div>
         </div>
 
         <div class="polaroids">
