@@ -24,9 +24,7 @@ body{
   font-family: "Gluten", system-ui, -apple-system, Segoe UI, Roboto, Arial;
 }
 
-/* ---------------------------
-   Moving background noise
----------------------------- */
+/* Moving background noise */
 .noise{
   position:fixed;
   inset:-30%;
@@ -47,9 +45,7 @@ body{
   100% { transform: translate(0,0); }
 }
 
-/* ---------------------------
-   Screens / centered UX
----------------------------- */
+/* Screens */
 .screen{
   position:fixed;
   inset:0;
@@ -67,9 +63,7 @@ body{
   width: min(1100px, 94vw);
 }
 
-/* ---------------------------
-   Scribbly animated type
----------------------------- */
+/* Scribbly animated type */
 .scribbleTitle{
   display:inline-block;
   letter-spacing: 0.2px;
@@ -107,9 +101,7 @@ body{
   50%    { transform: rotate(0.8deg) translateY(-2px); }
 }
 
-/* ---------------------------
-   Password row
----------------------------- */
+/* Password row */
 .row{
   display:flex;
   gap:10px;
@@ -134,14 +126,12 @@ body{
 }
 .hidden{ display:none; }
 
-/* ---------------------------
-   Gossip GIF (password) BEHIND everything + 3x big
----------------------------- */
+/* Gossip GIF behind password content + big */
 .gossipGif{
   position:absolute;
   width: min(780px, 160vw);
   height:auto;
-  z-index:-1; /* behind the password content */
+  z-index:-1;
   opacity:0.22;
   pointer-events:none;
   animation: gifFloatBg 3.2s ease-in-out infinite;
@@ -152,10 +142,7 @@ body{
   50%     { transform: translate(-50%, -52%) rotate(1.4deg) scale(1.03); }
 }
 
-/* =========================================================
-   BUTTONS — EXACT Lined Thick + heavy animated distortion
-========================================================= */
-
+/* Buttons — Lined Thick + distortion */
 .btn{
   align-self:center;
   background:transparent;
@@ -174,16 +161,13 @@ body{
   position:relative;
   isolation:isolate;
 }
-
 .btn:hover{
   box-shadow:2px 8px 4px -6px hsla(0,0%,0%,.3);
 }
-
 .btn.lined.thick{
   border: solid 7px currentColor;
   animation: btnWiggle 0.85s steps(2,end) infinite;
 }
-
 .btn.lined.thick::before,
 .btn.lined.thick::after{
   content:"";
@@ -200,7 +184,6 @@ body{
   animation: outlineJitter 0.75s steps(2,end) infinite;
   opacity:0.34;
 }
-
 .btn.lined.thick::after{
   inset:-16px -18px -18px -16px;
   opacity:0.18;
@@ -208,72 +191,41 @@ body{
   filter:
     url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n2'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' seed='13' stitchTiles='stitch'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='11'/%3E%3C/filter%3E%3C/svg%3E%23n2");
 }
-
 @keyframes btnWiggle{
   0%   { transform: rotate(-0.25deg) translate(0,0); }
   50%  { transform: rotate(0.45deg) translate(0.9px,-0.6px); }
   100% { transform: rotate(-0.15deg) translate(-0.6px,0.7px); }
 }
-
 @keyframes outlineJitter{
   0%   { transform: rotate(-0.6deg) translate(0,0); }
   50%  { transform: rotate(0.9deg) translate(0.8px,-0.5px); }
   100% { transform: rotate(-0.3deg) translate(-0.6px,0.6px); }
 }
-
 .btn:active{ transform: scale(0.97); }
-
-.btn:disabled{
-  opacity: 0.28;
-  cursor: not-allowed;
-  filter: grayscale(1);
-}
-.btn:disabled::before,
-.btn:disabled::after{
-  opacity: 0.12;
-  animation: none;
-}
-
-/* Color variants */
+.btn:disabled{ opacity: 0.28; cursor: not-allowed; filter: grayscale(1); }
+.btn:disabled::before, .btn:disabled::after{ opacity: 0.12; animation:none; }
 .btn.primary{ color: var(--pink); }
 .btn.no{ color: rgba(0,0,0,0.65); }
 .btn.yes{ color: rgba(0,0,0,0.88); }
 .btn.gift{ color: rgba(255,90,155,0.75); }
+.full{ width:100%; display:inline-block; text-align:center; text-decoration:none; }
 
-.full{
-  width:100%;
-  display:inline-block;
-  text-align:center;
-  text-decoration:none;
-}
-
-/* ---------------------------
-   Invitation screen (Cover)
----------------------------- */
-.coverContent{
-  position:relative;
-}
-
+/* COVER screen */
 .coverHeadlineWrap{
   display:flex;
   justify-content:center;
   margin-bottom: 10px;
 }
-
 .coverHeadline{
   font-size: clamp(26px, 3.4vw, 44px);
   text-align:center;
 }
+.pinkWord{ color: var(--pink); }
 
-.pinkWord{
-  color: var(--pink);
-}
-
-/* Big centered stage */
 .coverStage{
   position:relative;
   width: min(1100px, 94vw);
-  height: min(620px, 70vh);
+  height: min(640px, 72vh);
   margin: 0 auto;
   display:flex;
   align-items:center;
@@ -293,12 +245,19 @@ body{
   cursor:pointer;
   user-select:none;
 }
-
 .letterGif{
   width: min(560px, 92vw);
   max-width: 560px;
   filter: drop-shadow(0 18px 35px rgba(0,0,0,0.14));
   transform: translateZ(0);
+}
+
+/* OPTIONAL: blend mode to reduce white background look */
+.letterGif.blend{
+  mix-blend-mode: multiply; /* makes whites fade on light bg */
+}
+@supports not (mix-blend-mode: multiply){
+  .letterGif.blend{ filter: contrast(1.02) saturate(1.05); }
 }
 
 .letterHint{
@@ -311,38 +270,44 @@ body{
   z-index: 4;
 }
 
-/* More effectful zoom-in transition classes (set from JS) */
+/* Zooming the letter + ALSO the background stickers */
 .letterStack.zooming .letterGif{
   animation: zoomPop 0.72s cubic-bezier(.1,.9,.2,1) forwards;
 }
+.coverStage.zooming .decor,
+.coverStage.zooming .usPhoto{
+  animation: bgZoomPop 0.72s cubic-bezier(.1,.9,.2,1) forwards;
+}
 @keyframes zoomPop{
-  0%   { transform: scale(1) rotate(-1deg); filter: drop-shadow(0 18px 35px rgba(0,0,0,0.14)); }
+  0%   { transform: scale(1) rotate(-1deg); }
   45%  { transform: scale(1.22) rotate(1.6deg); }
-  100% { transform: scale(2.25) rotate(-0.8deg); filter: drop-shadow(0 30px 60px rgba(0,0,0,0.18)); }
+  100% { transform: scale(2.25) rotate(-0.8deg); }
+}
+@keyframes bgZoomPop{
+  0%   { transform: translate3d(var(--px,0px), var(--py,0px), 0) scale(1) rotate(var(--r,0deg)); opacity: .92; }
+  55%  { transform: translate3d(var(--px,0px), var(--py,0px), 0) scale(1.08) rotate(calc(var(--r,0deg) * 1.02)); opacity: .95; }
+  100% { transform: translate3d(var(--px,0px), var(--py,0px), 0) scale(1.16) rotate(calc(var(--r,0deg) * 0.98)); opacity: .98; }
 }
 
-/* BACK decor — 3x bigger, spread out, BEHIND letter, no borders */
+/* Back decor — slightly smaller + more spread, no borders */
 .decor,
 .usPhoto{
   position:absolute;
   z-index: 1;
   border: none;
   outline: none;
-  border-radius: 28px;
   box-shadow: none;
-  pointer-events: none; /* don't steal taps */
-  transform: translate3d(0,0,0);
+  pointer-events: none; /* don’t steal taps */
   will-change: transform;
-  opacity: 0.95;
+  opacity: 0.92;
 }
 
 .decor{
-  width: 480px;
-  height: 480px;
+  width: 420px;
+  height: 420px;
   object-fit: cover;
-  border-radius: 36px;
+  border-radius: 40px;
 }
-
 .usPhoto{
   width: 420px;
   height: 520px;
@@ -351,55 +316,38 @@ body{
   opacity: 0.92;
 }
 
-/* Spread-out positions */
-.d1{ left: -6%; top: 6%; transform: rotate(-6deg); }
-.d2{ right: -8%; bottom: 0%; transform: rotate(7deg); }
-.d3{ right: 6%; top: -10%; transform: rotate(-4deg); }
-.u1{ left: 6%; bottom: -8%; transform: rotate(4deg); }
+/* Spread-out positions + rotation stored in CSS vars for bg zoom */
+.d1{ left: -10%; top: 4%;  transform: rotate(-7deg); --r:-7deg; }
+.d2{ right: -12%; bottom: -6%; transform: rotate(8deg); --r:8deg; }
+.d3{ right: 10%; top: -14%; transform: rotate(-5deg); --r:-5deg; }
+.u1{ left: 10%; bottom: -14%; transform: rotate(4deg); --r:4deg; }
 
-/* Mobile layout adjustments */
-@media (max-width: 900px){
-  .decor{ width: 360px; height: 360px; opacity: 0.85; }
-  .usPhoto{ width: 320px; height: 410px; opacity: 0.85; }
-  .d1{ left: -18%; top: 14%; }
-  .d2{ right: -20%; bottom: -8%; }
-  .d3{ right: -8%; top: -16%; }
-  .u1{ left: -6%; bottom: -16%; }
-}
-
-/* ---------------------------
-   SPARKLES (emoji burst layer)
----------------------------- */
+/* Sparkles layer */
 .sparkles{
   position:absolute;
   inset:0;
-  z-index: 2; /* between decor (1) and letter (3) */
+  z-index: 4; /* ABOVE the letter + hint */
   pointer-events:none;
   overflow: visible;
 }
-
-/* Each sparkle element */
 .spark{
   position:absolute;
   transform: translate(-50%, -50%);
   line-height: 1;
-  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.12));
   opacity: 0;
-  animation: sparklePop 850ms ease-out forwards;
+  filter: drop-shadow(0 10px 18px rgba(0,0,0,0.12));
+  animation: sparklePop 900ms ease-out forwards;
   will-change: transform, opacity;
 }
-
-/* different vibe sizes */
 .spark.s1{ font-size: 18px; }
 .spark.s2{ font-size: 26px; }
 .spark.s3{ font-size: 34px; }
-.spark.s4{ font-size: 44px; }
+.spark.s4{ font-size: 46px; }
 
-/* Pop + drift */
 @keyframes sparklePop{
   0%{
     opacity: 0;
-    transform: translate(-50%, -50%) scale(0.4) rotate(-12deg);
+    transform: translate(-50%, -50%) scale(0.3) rotate(-12deg);
   }
   25%{
     opacity: 1;
@@ -407,13 +355,21 @@ body{
   }
   100%{
     opacity: 0;
-    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.95) rotate(24deg);
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(0.92) rotate(24deg);
   }
 }
 
-/* ---------------------------
-   Question background
----------------------------- */
+/* Mobile tweaks */
+@media (max-width: 900px){
+  .decor{ width: 340px; height: 340px; opacity: 0.84; }
+  .usPhoto{ width: 320px; height: 410px; opacity: 0.86; }
+  .d1{ left: -18%; top: 14%; }
+  .d2{ right: -20%; bottom: -10%; }
+  .d3{ right: -10%; top: -18%; }
+  .u1{ left: -6%; bottom: -18%; }
+}
+
+/* Question bg */
 .questionBg{
   position:fixed;
   inset:0;
@@ -437,9 +393,7 @@ body{
 }
 .btnRow .btn{ min-width: 180px; }
 
-/* ---------------------------
-   Schedule
----------------------------- */
+/* Schedule */
 .scheduleGrid{
   display:grid;
   grid-template-columns: 1fr 1fr;
@@ -450,16 +404,9 @@ body{
 @media (max-width: 900px){
   .scheduleGrid{ grid-template-columns: 1fr; }
 }
-.scheduleName{
-  font-size: 32px;
-  line-height: 1.0;
-  margin-bottom: 6px;
-}
-.scheduleDesc{
-  margin-top: 6px;
-  font-size: 18px;
-  color: rgba(0,0,0,0.74);
-}
+.scheduleName{ font-size: 32px; line-height: 1.0; margin-bottom: 6px; }
+.scheduleDesc{ margin-top: 6px; font-size: 18px; color: rgba(0,0,0,0.74); }
+
 .polaroids{
   position:relative;
   min-height: 360px;
@@ -477,26 +424,15 @@ body{
   border: 3px solid rgba(0,0,0,0.14);
   backdrop-filter: blur(6px);
 }
-.polaroid img{
-  width:100%;
-  height:100%;
-  object-fit: cover;
-  border-radius: 18px;
-}
+.polaroid img{ width:100%; height:100%; object-fit: cover; border-radius: 18px; }
 .tilt1{ left: 18px; top: 18px; transform: rotate(-6deg); }
 .tilt2{ right: 22px; top: 40px; transform: rotate(7deg); }
 .tilt3{ left: 46px; bottom: 24px; transform: rotate(4deg); }
 .tilt4{ right: 54px; bottom: 22px; transform: rotate(-5deg); }
 
-.center{
-  display:flex;
-  justify-content:center;
-  margin-top: 18px;
-}
+.center{ display:flex; justify-content:center; margin-top: 18px; }
 
-/* ---------------------------
-   Gift
----------------------------- */
+/* Gift */
 .giftWrap{ text-align:center; }
 .roseField{
   margin: 18px auto 10px;
@@ -506,12 +442,8 @@ body{
   gap: 10px;
   padding: 10px;
 }
-@media (max-width: 900px){
-  .roseField{ grid-template-columns: repeat(4, minmax(0, 1fr)); }
-}
-@media (max-width: 520px){
-  .roseField{ grid-template-columns: repeat(3, minmax(0, 1fr)); }
-}
+@media (max-width: 900px){ .roseField{ grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+@media (max-width: 520px){ .roseField{ grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 .rose{
   width: 100%;
   aspect-ratio: 1/1;
