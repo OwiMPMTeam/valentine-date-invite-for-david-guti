@@ -107,7 +107,7 @@ function spawnGossipGifRandomly() {
 
   // append to password screen
   const screen = screens.password;
-  if (screen) screen.appendChild(gossipGifEl);
+  if (screen) screen.prepend(gossipGifEl);
 }
 
 function handlePasswordSubmit() {
