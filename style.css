@@ -509,3 +509,9 @@ button, a{ font-family:"Gluten", system-ui !important; font-weight:100; }
     margin: 0 auto;
   }
 }
+
+/* DESKTOP ONLY: spread polaroid3 & polaroid4 more apart */
+@media (min-width: 901px){
+  .p3{ left: 240px !important; bottom: 0px !important; }
+  .p4{ right:240px !important; bottom: 0px !important; }
+}
