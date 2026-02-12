@@ -6,12 +6,59 @@ function showScreen(id){
 }
 
 /* =========================
+   Tilt Permission Gate (iOS requires a tap)
+========================= */
+const tiltGate = $("tiltGate");
+const tiltBtn = $("tiltBtn");
+const tiltSkip = $("tiltSkip");
+
+let tiltEnabled = false;
+let tiltX = 0, tiltY = 0;
+
+async function requestTiltPermission(){
+  // iOS Safari requires requestPermission()
+  if (typeof DeviceOrientationEvent !== "undefined" &&
+      typeof DeviceOrientationEvent.requestPermission === "function") {
+    const res = await DeviceOrientationEvent.requestPermission();
+    return res === "granted";
+  }
+  // non-iOS browsers: no permission needed
+  return true;
+}
+
+function enableTilt(){
+  tiltEnabled = true;
+  window.addEventListener("deviceorientation", (e) => {
+    // gamma: left-right, beta: front-back
+    const gamma = e.gamma ?? 0; // -90..90
+    const beta  = e.beta ?? 0;  // -180..180
+    tiltX = Math.max(-1, Math.min(1, gamma / 25));
+    tiltY = Math.max(-1, Math.min(1, beta / 35));
+  }, { passive:true });
+}
+
+async function handleTiltEnable(){
+  try{
+    const ok = await requestTiltPermission();
+    if (ok) enableTilt();
+  } catch(e) {
+    // ignore
+  } finally {
+    tiltGate?.classList.add("hidden");
+  }
+}
+
+tiltBtn?.addEventListener("click", handleTiltEnable);
+tiltSkip?.addEventListener("click", () => tiltGate?.classList.add("hidden"));
+
+/* =========================
    PASSWORD
 ========================= */
 const pwInput = $("pwInput");
 const pwBtn = $("pwBtn");
 const pwMsg = $("pwMsg");
-const pwBg = $("pwBg");
+const pwGossip = $("pwGossip");
+
 let fails = 0;
 
 function norm(s){
@@ -33,17 +80,20 @@ function validPw(s){
   return ok.has(v);
 }
 
-function setPwMsg(text){
-  pwMsg.textContent = text || "";
-}
+function setPwMsg(text){ pwMsg.textContent = text || ""; }
 
-function showGossipBehind(){
-  if (!pwBg) return;
-  pwBg.innerHTML = "";
+function showGossipNearInput(){
+  if (!pwGossip) return;
+  pwGossip.innerHTML = "";
   const img = document.createElement("img");
   img.src = "./assets/password/gossip.gif";
   img.alt = "gossip";
-  pwBg.appendChild(img);
+  pwGossip.appendChild(img);
+}
+
+function clearGossip(){
+  if (!pwGossip) return;
+  pwGossip.innerHTML = "";
 }
 
 function submitPw(){
@@ -51,18 +101,24 @@ function submitPw(){
   if (validPw(v)){
     fails = 0;
     setPwMsg("");
-    if (pwBg) pwBg.innerHTML = "";
+    clearGossip();
     showScreen("screen-cover");
     return;
   }
+
   fails += 1;
+
+  // 3 tries until GIF + final hint
   if (fails === 1){
     setPwMsg("Nope 😼 try again.");
   } else if (fails === 2){
-    setPwMsg("Hint: Gossip Girls asked him for the weather.");
-    showGossipBehind();
+    setPwMsg("Nope. Again 😇");
+  } else if (fails === 3){
+    setPwMsg("Mean Girls: He asked her for the weather!");
+    showGossipNearInput();
   } else {
-    setPwMsg("It’s October 3 🙄 girl… come on");
+    setPwMsg("Girl... It is October 3 🙄");
+    showGossipNearInput();
   }
 }
 
@@ -70,7 +126,7 @@ pwBtn?.addEventListener("click", submitPw);
 pwInput?.addEventListener("keydown", (e) => { if (e.key === "Enter") submitPw(); });
 
 /* =========================
-   SPARKLES
+   SPARKLES (fireworks + fall)
 ========================= */
 const sparkles = $("sparkles");
 
@@ -81,112 +137,153 @@ function burstSparkles(){
 
   sparkles.innerHTML = "";
 
-  const count = 120;
+  const count = 220; // cover the screen
   for (let i=0; i<count; i++){
     const s = document.createElement("div");
     s.className = `spark ${sizes[Math.floor(Math.random()*sizes.length)]}`;
     s.textContent = symbols[Math.floor(Math.random()*symbols.length)];
-    s.style.left = `${Math.random()*120 - 10}%`;
-    s.style.top  = `${Math.random()*85}%`;
+
+    // Boom origin near the letter (center-ish)
+    const originX = 50 + (Math.random()*10 - 5);
+    const originY = 35 + (Math.random()*10 - 5);
+
+    s.style.left = `${originX}%`;
+    s.style.top  = `${originY}%`;
+
+    // boom vectors
+    s.style.setProperty("--bx", `${Math.random()*520 - 260}px`);
+    s.style.setProperty("--by", `${Math.random()*380 - 190}px`);
+
+    // drift vectors
     s.style.setProperty("--dx", `${Math.random()*900 - 450}px`);
     s.style.setProperty("--dy", `${Math.random()*520 - 260}px`);
-    s.style.animationDelay = `${Math.random()*1800}ms`;
+
+    s.style.animationDelay = `${Math.random()*550}ms`;
     sparkles.appendChild(s);
   }
 
+  // keep them visible into next screen
   setTimeout(() => { sparkles.innerHTML = ""; }, 11500);
 }
 
 /* =========================
-   COVER
+   Parallax (mouse + tilt)
+   Works for cover + schedule
 ========================= */
-const letterBtn = $("letterBtn");
-const letterImg = $("letterImg");
+function attachParallax(areaId){
+  const area = $(areaId);
+  if (!area) return;
 
-letterBtn?.addEventListener("click", () => {
-  burstSparkles();
-  letterImg.src = "./assets/cover/Letter_Opening.gif";
-  setTimeout(() => {
-    letterImg.src = "./assets/cover/Letter_Flying.gif";
-    showScreen("screen-question");
-  }, 700);
-});
+  const els = Array.from(area.querySelectorAll(".parallax"));
+  if (!els.length) return;
 
-/* Parallax (doesn't break rotations) */
-const parallaxArea = $("parallaxArea");
-const parallaxEls = parallaxArea ? Array.from(parallaxArea.querySelectorAll(".parallax")) : [];
-let tx=0, ty=0, cx=0, cy=0;
+  let tx=0, ty=0, cx=0, cy=0;
 
-function applyParallax(){
-  parallaxEls.forEach(el => {
-    const depth = Number(el.dataset.depth || "16");
-    const rot = Number(el.dataset.rot || "0");
-    const dx = cx * depth;
-    const dy = cy * depth;
-    el.style.transform = `translate(${dx}px, ${dy}px) rotate(${rot}deg)`;
-  });
-}
+  function apply(){
+    // blend mouse/touch + tilt
+    const mx = cx + (tiltEnabled ? tiltX * 0.35 : 0);
+    const my = cy + (tiltEnabled ? tiltY * 0.35 : 0);
 
-function loop(){
-  cx += (tx - cx) * 0.10;
-  cy += (ty - cy) * 0.10;
-  applyParallax();
-  requestAnimationFrame(loop);
-}
+    els.forEach(el => {
+      const depth = Number(el.dataset.depth || "16");
+      const rot = Number(el.dataset.rot || "0");
+      const dx = mx * depth;
+      const dy = my * depth;
+      el.style.transform = `translate(${dx}px, ${dy}px) rotate(${rot}deg)`;
+    });
+  }
 
-if (parallaxArea && parallaxEls.length){
-  parallaxArea.addEventListener("mousemove", (e) => {
-    const r = parallaxArea.getBoundingClientRect();
+  function loop(){
+    cx += (tx - cx) * 0.10;
+    cy += (ty - cy) * 0.10;
+    apply();
+    requestAnimationFrame(loop);
+  }
+
+  area.addEventListener("mousemove", (e) => {
+    const r = area.getBoundingClientRect();
     const nx = ((e.clientX - r.left) / r.width) * 2 - 1;
     const ny = ((e.clientY - r.top) / r.height) * 2 - 1;
     tx = Math.max(-1, Math.min(1, nx)) * 0.9;
     ty = Math.max(-1, Math.min(1, ny)) * 0.9;
   }, { passive:true });
 
-  parallaxArea.addEventListener("mouseleave", () => { tx = 0; ty = 0; }, { passive:true });
+  area.addEventListener("mouseleave", () => { tx = 0; ty = 0; }, { passive:true });
+
+  area.addEventListener("touchmove", (e) => {
+    if (!e.touches || !e.touches[0]) return;
+    const r = area.getBoundingClientRect();
+    const nx = ((e.touches[0].clientX - r.left) / r.width) * 2 - 1;
+    const ny = ((e.touches[0].clientY - r.top) / r.height) * 2 - 1;
+    tx = Math.max(-1, Math.min(1, nx)) * 0.9;
+    ty = Math.max(-1, Math.min(1, ny)) * 0.9;
+  }, { passive:true });
 
   requestAnimationFrame(loop);
 }
 
+attachParallax("parallaxArea");
+attachParallax("scheduleParallaxArea");
+
 /* =========================
-   QUESTION (YES GROWS A LOT)
+   COVER click -> rapid zoom + swap gif
+========================= */
+const letterBtn = $("letterBtn");
+const letterImg = $("letterImg");
+const parallaxArea = $("parallaxArea");
+
+letterBtn?.addEventListener("click", () => {
+  burstSparkles();
+
+  // rapid zoom moment
+  parallaxArea?.classList.add("zooming");
+
+  letterImg.src = "./assets/cover/Letter_Opening.gif";
+  setTimeout(() => {
+    parallaxArea?.classList.remove("zooming");
+    letterImg.src = "./assets/cover/Letter_Flying.gif";
+    showScreen("screen-question");
+  }, 700);
+});
+
+/* =========================
+   QUESTION (grow YES to ~1/8 page width after 6 clicks)
 ========================= */
 const yesBtn = $("yesBtn");
 const noBtn  = $("noBtn");
 const rageLine = $("rageLine");
 const qBgImg = $("qBgImg");
+const btnRow = $("btnRow");
 
 let noClicks = 0;
 const maxClicks = 6;
 
 function updateButtons(){
-  // Significant growth
-  const yesScale = 1 + noClicks * 0.48;      // BIG growth per click
-  const noScale  = Math.max(0.45, 1 - noClicks * 0.14);
+  // Use flex-grow so they resize next to each other (no overlap)
+  const yesGrow = 1 + (noClicks * 1.15);  // yes gets BIG
+  const noGrow  = Math.max(0.35, 1 - (noClicks * 0.12)); // no gets smaller
 
-  // keep them close and funny
-  const nudge = Math.min(26, noClicks * 5);
+  yesBtn.style.flex = `${yesGrow} 1 0%`;
+  noBtn.style.flex  = `${noGrow} 1 0%`;
 
-  yesBtn.style.transform = `translateX(${nudge}px) scale(${yesScale})`;
-  noBtn.style.transform  = `translateX(${nudge}px) scale(${noScale})`;
+  // Also scale slightly for drama, but still side-by-side
+  const yesScale = 1 + (noClicks * 0.14);
+  const noScale  = Math.max(0.72, 1 - (noClicks * 0.06));
+  yesBtn.style.transform = `scale(${yesScale})`;
+  noBtn.style.transform  = `scale(${noScale})`;
 
-  if (noClicks > 0){
-    rageLine.textContent = `Try me bitch. 😡  ${noClicks} / ${maxClicks}`;
-  } else {
-    rageLine.textContent = "";
-  }
+  rageLine.textContent = noClicks > 0 ? `Try me bitch. 😡  ${noClicks} / ${maxClicks}` : "";
 
   if (noClicks >= maxClicks){
     noBtn.disabled = true;
-    noBtn.innerHTML = `<span class="btnStroke">Hehe. YOU WISH 🤪</span>`;
     qBgImg.src = "./assets/question/bg_final.gif";
 
-    // pound YES
+    // Pound YES
     yesBtn.animate(
       [
-        { transform: `translateX(${nudge}px) scale(${yesScale})` },
-        { transform: `translateX(${nudge}px) scale(${yesScale * 1.06})` },
-        { transform: `translateX(${nudge}px) scale(${yesScale})` },
+        { transform: `scale(${yesScale})` },
+        { transform: `scale(${yesScale * 1.08})` },
+        { transform: `scale(${yesScale})` },
       ],
       { duration: 650, iterations: Infinity, easing: "ease-in-out" }
     );
@@ -210,11 +307,11 @@ updateButtons();
 ========================= */
 $("giftBtn")?.addEventListener("click", () => {
   showScreen("screen-gift");
-  buildBouquet(); // emoji bouquet animation
+  buildBouquet(); // DO NOT CHANGE THIS (you love it)
 });
 
 /* =========================
-   GIFT: BOUQUET OF ROSES (emoji)
+   GIFT: emoji bouquet (slightly bigger)
 ========================= */
 const bouquet = $("bouquet");
 
@@ -222,16 +319,14 @@ function buildBouquet(){
   if (!bouquet) return;
   bouquet.innerHTML = "";
 
-  // Bouquet coordinates (percent positions) shaped like a bouquet
   const coords = [
-    [50,18],[44,20],[56,20],[39,24],[61,24],[33,30],[67,30],
-    [28,38],[72,38],[24,48],[76,48],[30,56],[70,56],
-    [36,62],[64,62],[42,66],[58,66],[48,68],[52,68],
-    [46,72],[54,72],[50,75],[45,78],[55,78],[50,82]
+    [50,16],[44,18],[56,18],[39,22],[61,22],[33,28],[67,28],
+    [28,36],[72,36],[24,46],[76,46],[30,54],[70,54],
+    [36,60],[64,60],[42,64],[58,64],[48,66],[52,66],
+    [46,70],[54,70],[50,73],[45,76],[55,76],[50,80]
   ];
 
-  // Add extra roses around for richness
-  const extra = 18;
+  const extra = 22;
   for (let i=0; i<coords.length + extra; i++){
     const el = document.createElement("div");
     el.className = "rose";
@@ -241,16 +336,16 @@ function buildBouquet(){
     if (i < coords.length){
       [x,y] = coords[i];
     } else {
-      // random around bouquet center
-      x = 50 + (Math.random()*28 - 14);
-      y = 50 + (Math.random()*40 - 20);
+      x = 50 + (Math.random()*30 - 15);
+      y = 50 + (Math.random()*44 - 22);
     }
 
-    const size = 28 + Math.random()*34; // size variation
+    // slightly bigger overall
+    const size = 36 + Math.random()*42;
     el.style.left = `${x}%`;
     el.style.top  = `${y}%`;
     el.style.fontSize = `${size}px`;
-    el.style.animationDelay = `${i * 40}ms`;
+    el.style.animationDelay = `${i * 38}ms`;
 
     bouquet.appendChild(el);
   }
@@ -265,14 +360,17 @@ $("restartBtn")?.addEventListener("click", () => {
 
   if (pwInput) pwInput.value = "";
   setPwMsg("");
-  if (pwBg) pwBg.innerHTML = "";
+  clearGossip();
   if (sparkles) sparkles.innerHTML = "";
 
   qBgImg.src = "./assets/question/bg.gif";
   noBtn.disabled = false;
-  noBtn.innerHTML = `<span class="btnStroke">Hell nah, Keysha!</span>`;
+
+  yesBtn.style.flex = "1 1 0%";
+  noBtn.style.flex  = "1 1 0%";
   yesBtn.style.transform = "";
   noBtn.style.transform = "";
+
   rageLine.textContent = "";
 
   if (letterImg) letterImg.src = "./assets/cover/Letter_Flying.gif";
